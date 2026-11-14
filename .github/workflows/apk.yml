@@ -1,25 +1,23 @@
-name: Build Flutter APK
-on: [push]
+name: Android APK Derle
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
 jobs:
   build:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '17'
       - uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
-      - name: Projeyi Hazirla ve Derle
-        run: |
-          flutter create --project-name kurum_kasa gecici_proje
-          cp lib/main.dart gecici_proje/lib/main.dart
-          cd gecici_proje
-          flutter build apk --release
-      - name: APK Yukle
-        uses: actions/upload-artifact@v4
+      - run: flutter pub get
+      - run: flutter build apk --release
+      - uses: actions/upload-artifact@v4
         with:
-          name: kurum-kasa-apk
-          path: gecici_proje/build/app/outputs/flutter-apk/app-release.apk
+          name: kurum-kasa-takip-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
+
+
