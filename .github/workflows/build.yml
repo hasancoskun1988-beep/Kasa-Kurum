@@ -10,8 +10,10 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v4
+    - name: Clone Repo Manually
+      run: |
+        git clone https://github.com/${{ github.repository }}.git .
+        git checkout ${{ github.ref_name }}
 
     - name: Install Java 17
       run: |
@@ -33,8 +35,13 @@ jobs:
     - name: Build APK
       run: flutter build apk --release
 
-    - name: Upload APK
+    - name: Upload APK via Script
+      run: |
+        mkdir -p artifact
+        cp build/app/outputs/flutter-apk/app-release.apk artifact/app-release.apk
+        
+    - name: Upload Artifact
       uses: actions/upload-artifact@v4
       with:
         name: app-release
-        path: build/app/outputs/flutter-apk/app-release.apk
+        path: artifact/app-release.apk
