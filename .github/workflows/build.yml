@@ -13,27 +13,31 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v4
 
-    - name: Install Java 17
+    - name: Set up Java 17
       run: |
         sudo apt-get update
         sudo apt-get install -y openjdk-17-jdk
         java -version
 
-    - name: Clone Flutter SDK
+    - name: Set up Flutter SDK
       run: |
         git clone https://github.com/flutter/flutter.git -b 3.22.2 --depth 1 ~/flutter
+        echo "$HOME/flutter/bin" >> $GITHUB_PATH
+
+    - name: Verify Flutter
+      run: flutter --version
+
+    - name: Get Dependencies
+      run: flutter pub get
 
     - name: Build APK
-      run: |
-        export PATH="$HOME/flutter/bin:$PATH"
-        flutter doctor
-        flutter pub get
-        flutter build apk --release
+      run: flutter build apk --release
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
         name: app-release
         path: build/app/outputs/flutter-apk/app-release.apk
+
 
 
