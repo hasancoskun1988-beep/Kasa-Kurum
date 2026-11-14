@@ -92,6 +92,30 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani> with SingleTickerProvid
     {'sembol': 'CHF', 'ad': 'CHF - İsviçre Frangı (CHF)'},
     {'sembol': '¥', 'ad': 'JPY/CNY - Yen / Yuan (¥)'},
     {'sembol': '₽', 'ad': 'RUB - Rus Rublesi (₽)'},
+    {'sembol': '﷼', 'ad': 'SAR - Suudi Riyali (﷼)'},
+    {'sembol': 'د.إ', 'ad': 'AED - BAE Dirhemi (د.إ)'},
+    {'sembol': 'د.ك', 'ad': 'KWD - Kuveyt Dinarı (د.ك)'},
+    {'sembol': 'ر.ق', 'ad': 'QAR - Katar Riyali (ر.ق)'},
+    {'sembol': '₹', 'ad': 'INR - Hindistan Rupisi (₹)'},
+    {'sembol': '₩', 'ad': 'KRW - Güney Kore Wonu (₩)'},
+    {'sembol': 'C\$', 'ad': 'CAD - Kanada Doları (C\$)'},
+    {'sembol': 'A\$', 'ad': 'AUD - Avustralya Doları (A\$)'},
+    {'sembol': 'R\$', 'ad': 'BRL - Brezilya Reali (R\$)'},
+    {'sembol': 'kr', 'ad': 'SEK/NOK - İsveç/Norveç Kronu (kr)'},
+    {'sembol': 'zł', 'ad': 'PLN - Polonya Zlotisi (zł)'},
+    {'sembol': '₴', 'ad': 'UAH - Ukrayna Grivnası (₴)'},
+    {'sembol': '₸', 'ad': 'KZT - Kazakistan Tengesi (₸)'},
+    {'sembol': 'с', 'ad': 'KGS - Kırgızistan Somu (с)'},
+    {'sembol': 'soʻm', 'ad': 'UZS - Özbekistan Somu (soʻm)'},
+    {'sembol': 'GEL', 'ad': 'GEL - Gürcistan Larisi (₾)'},
+    {'sembol': '₪', 'ad': 'ILS - İsrail Şekeli (₪)'},
+    {'sembol': 'R', 'ad': 'ZAR - Güney Afrika Randı (R)'},
+    {'sembol': '₦', 'ad': 'NGN - Nijerya Nairası (₦)'},
+    {'sembol': '฿', 'ad': 'THB - Tayland Bahtı (฿)'},
+    {'sembol': 'Rp', 'ad': 'IDR - Endonezya Rupiahı (Rp)'},
+    {'sembol': 'RM', 'ad': 'MYR - Malezya Ringgiti (RM)'},
+    {'sembol': '₱', 'ad': 'PHP - Filipin Pesosu (₱)'},
+    {'sembol': '₫', 'ad': 'VND - Vietnam Dongu (₫)'},
   ];
 
   List<String> get _aylar {
@@ -247,7 +271,7 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani> with SingleTickerProvid
     int y = 2006, a = 0;
     while (y < _yil || (y == _yil && a < _ay)) {
       String key = '$y-$a';
-      double g = (_odemeler[key]?.values.fold(0.0, (t, v) => t + v)) ?? 0.0;
+      double g = (_odemeler[key]?.values.fold(0.0, (t, v) => t! + v)) ?? 0.0;
       double gi = (_giderler[key]?.fold(0.0, (t, x) => t + x.tutar)) ?? 0.0;
       toplamDevir += (g - gi);
       a++;
@@ -517,3 +541,4 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani> with SingleTickerProvid
     );
   }
 }
+
