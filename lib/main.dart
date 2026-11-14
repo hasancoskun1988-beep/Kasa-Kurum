@@ -71,19 +71,19 @@ class AnaTakipEkrani extends StatefulWidget {
 
 class _AnaTakipEkraniState extends State<AnaTakipEkrani> with SingleTickerProviderStateMixin, WidgetsBindingObserver {
   late TabController _tab;
-  final List<int> _yillar = List.generate(45, (i) => 2006 + i);
+  final List _yillar = List.generate(45, (i) => 2006 + i);
   int _yil = 2026, _ay = 0;
   double _varsayilanAidat = 500.0;
-  List<String> _personeller = ['Ahmet Yılmaz', 'Mehmet Demir', 'Ayşe Kaya'];
-  final Map<String, Map<String, double>> _odemeler = {};
-  final Map<String, List<Gider>> _giderler = {};
+  List _personeller = ['Ahmet Yılmaz', 'Mehmet Demir', 'Ayşe Kaya'];
+  final Map _odemeler = {};
+  final Map _giderler = {};
   
-  final List<String> _diller = [
+  final List _diller = [
     'Türkçe', 'English', 'Deutsch', 'Français', 'Español', 'العربية',
     'Русский', '中文', '日本語', 'Português', 'Italiano', 'हिन्दी'
   ];
 
-  final List> _paraBirimleri = [
+  final List _paraBirimleri = [
     {'sembol': '₺', 'ad': 'TRY - Türk Lirası (₺)'},
     {'sembol': '\$', 'ad': 'USD - ABD Doları (\$)'},
     {'sembol': '€', 'ad': 'EUR - Euro (€)'},
@@ -118,7 +118,7 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani> with SingleTickerProvid
     {'sembol': '₫', 'ad': 'VND - Vietnam Dongu (₫)'},
   ];
 
-  List<String> get _aylar {
+  List get _aylar {
     final aylarMap = {
       'Türkçe': ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara'],
       'English': ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
@@ -136,7 +136,7 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani> with SingleTickerProvid
     return aylarMap[widget.seciliDil] ?? aylarMap['English']!;
   }
 
-  Map<String, String> get t {
+  Map get t {
     final sozlukler = {
       'Türkçe': {
         'title': '2006-2050 Kasa Takip', 'devir': 'Geçen Aydan Devir:', 'gelir': 'Personel Geliri:',
@@ -221,22 +221,22 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani> with SingleTickerProvid
     }
   }
 
-  Future<void> _verileriYukle() async {
+  Future _verileriYukle() async {
     try {
       if (await _kayitDosyasi.exists()) {
-        final Map<String, dynamic> veri = jsonDecode(await _kayitDosyasi.readAsString()) as Map<String, dynamic>;
+        final Map veri = jsonDecode(await _kayitDosyasi.readAsString()) as Map;
         
         if (veri['personeller'] != null) {
-          _personeller = List<String>.from(veri['personeller'] as List);
+          _personeller = List.from(veri['personeller']);
         }
         if (veri['varsayilanAidat'] != null) {
           _varsayilanAidat = (veri['varsayilanAidat'] as num).toDouble();
         }
         if (veri['odemeler'] != null) {
           _odemeler.clear();
-          (veri['odemeler'] as Map<String, dynamic>).forEach((k, v) {
-            final Map<String, double> subMap = {};
-            (v as Map<String, dynamic>).forEach((p, a) {
+          (veri['odemeler'] as Map).forEach((k, v) {
+            final Map subMap = {};
+            (v as Map).forEach((p, a) {
               subMap[p] = (a as num).toDouble();
             });
             _odemeler[k] = subMap;
@@ -244,9 +244,9 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani> with SingleTickerProvid
         }
         if (veri['giderler'] != null) {
           _giderler.clear();
-          (veri['giderler'] as Map<String, dynamic>).forEach((k, l) {
-            final List<Gider> giderListesi = (l as List)
-                .map((i) => Gider.fromJson(i as Map<String, dynamic>))
+          (veri['giderler'] as Map).forEach((k, l) {
+            final List giderListesi = (l as List)
+                .map((i) => Gider.fromJson(i as Map))
                 .toList();
             _giderler[k] = giderListesi;
           });
@@ -256,9 +256,9 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani> with SingleTickerProvid
     } catch (_) {}
   }
 
-  Future<void> _verileriKaydet({bool bildirimGoster = false}) async {
+  Future _verileriKaydet({bool bildirimGoster = false}) async {
     try {
-      final Map<String, dynamic> veri = {
+      final Map veri = {
         'personeller': _personeller,
         'varsayilanAidat': _varsayilanAidat,
         'odemeler': _odemeler,
@@ -272,8 +272,8 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani> with SingleTickerProvid
   }
 
   String get _donemKey => '$_yil-$_ay';
-  Map<String, double> get _aktifOdemeler => _odemeler.putIfAbsent(_donemKey, () => {});
-  List<Gider> get _aktifGiderler => _giderler.putIfAbsent(_donemKey, () => []);
+  Map get _aktifOdemeler => _odemeler.putIfAbsent(_donemKey, () => {});
+  List get _aktifGiderler => _giderler.putIfAbsent(_donemKey, () => []);
 
   double get _toplamGelir => _aktifOdemeler.values.fold(0.0, (a, b) => a + b);
   double get _toplamGider => _aktifGiderler.fold(0.0, (a, b) => a + b.tutar);
@@ -391,13 +391,13 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani> with SingleTickerProvid
             ),
             const SizedBox(height: 16),
             Text(t['currency']!),
-            DropdownButton<String>(
+            DropdownButton(
               value: widget.paraBirimi,
               isExpanded: true,
-              items: _paraBirimleri.map((pb) => DropdownMenuItem(value: pb['sembol'], child: Text(pb['ad']!))).toList(),
+              items: _paraBirimleri.map((pb) => DropdownMenuItem(value: pb['sembol'], child: Text(pb['ad']))).toList(),
               onChanged: (yeni) {
                 if (yeni != null) {
-                  widget.onParaBirimiDegistir(yeni);
+                  widget.onParaBirimiDegistir(yeni.toString());
                   Navigator.pop(c);
                 }
               },
@@ -454,11 +454,11 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani> with SingleTickerProvid
           IconButton(icon: const Icon(Icons.description, color: Colors.red), tooltip: t['report'], onPressed: _raporPenceresiAc),
           IconButton(icon: const Icon(Icons.save, color: Colors.indigo), tooltip: t['save'], onPressed: () => _verileriKaydet(bildirimGoster: true)),
           IconButton(icon: const Icon(Icons.settings), tooltip: t['settings'], onPressed: _ayarlarPenceresi),
-          DropdownButton<String>(
+          DropdownButton(
             value: widget.seciliDil,
             underline: const SizedBox(),
             items: _diller.map((dil) => DropdownMenuItem(value: dil, child: Text(dil, style: const TextStyle(fontSize: 11)))).toList(),
-            onChanged: (yeni) => widget.onDilDegistir(yeni!),
+            onChanged: (yeni) => widget.onDilDegistir(yeni.toString()),
           ),
           const SizedBox(width: 4),
         ],
@@ -469,7 +469,7 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani> with SingleTickerProvid
             padding: const EdgeInsets.all(8),
             color: Colors.indigo.shade50,
             child: Row(children: [
-              DropdownButton<int>(value: _yil, items: _yillar.map((y) => DropdownMenuItem(value: y, child: Text('$y', style: const TextStyle(fontWeight: FontWeight.bold)))).toList(), onChanged: (v) => setState(() => _yil = v!)),
+              DropdownButton(value: _yil, items: _yillar.map((y) => DropdownMenuItem(value: y, child: Text('$y', style: const TextStyle(fontWeight: FontWeight.bold)))).toList(), onChanged: (v) => setState(() => _yil = int.parse(v.toString()))),
               const SizedBox(width: 8),
               Expanded(
                 child: SingleChildScrollView(
@@ -504,8 +504,8 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani> with SingleTickerProvid
                     child: ListView.builder(
                       itemCount: _personeller.length,
                       itemBuilder: (_, index) {
-                        String isim = _personeller[index];
-                        double odenen = _aktifOdemeler[isim] ?? 0.0;
+                        String isim = _personeller[index].toString();
+                        double odenen = (_aktifOdemeler[isim] as num?)?.toDouble() ?? 0.0;
                         bool odedi = odenen > 0;
                         return Card(
                           margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
