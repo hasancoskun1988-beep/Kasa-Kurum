@@ -226,6 +226,9 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani>
             label: Text(t['startBtn']!),
           ),
         ],
+      ),
+    );
+  }
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
