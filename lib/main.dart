@@ -226,12 +226,6 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani>
             label: Text(t['startBtn']!),
           ),
         ],
-      ),
-    );
-  }
-
-  @override
-  void dispose() {
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
@@ -251,7 +245,6 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani>
       final dosya = await _kayitDosyasi;
       if (await dosya.exists()) {
         final Map<String, dynamic> veri = jsonDecode(await dosya.readAsString());
-
         if (veri['dil'] != null && _diller.contains(veri['dil'])) {
           widget.onDilDegistir(veri['dil'].toString());
         }
@@ -312,7 +305,6 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani>
   String get _donemKey => '$_yil-$_ay';
   Map<String, double> get _aktifOdemeler => _odemeler.putIfAbsent(_donemKey, () => {});
   List<Gider> get _aktifGiderler => _giderler.putIfAbsent(_donemKey, () => []);
-
   double get _toplamGelir => _aktifOdemeler.values.fold(0.0, (a, b) => a + b);
   double get _toplamGider => _aktifGiderler.fold(0.0, (a, b) => a + b.tutar);
 
@@ -325,14 +317,10 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani>
       double gi = (_giderler[key]?.fold(0.0, (t, x) => t + x.tutar)) ?? 0.0;
       toplamDevir += (g - gi);
       a++;
-      if (a > 11) {
-        a = 0;
-        y++;
-      }
+      if (a > 11) { a = 0; y++; }
     }
     return toplamDevir;
   }
-
   void _personelEklePenceresi() {
     final ctrl = TextEditingController();
     showDialog(
@@ -347,9 +335,7 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani>
               if (ctrl.text.trim().isNotEmpty) {
                 setState(() {
                   String ad = ctrl.text.trim();
-                  if (!_personeller.contains(ad)) {
-                    _personeller.add(ad);
-                  }
+                  if (!_personeller.contains(ad)) _personeller.add(ad);
                   _aktifOdemeler[ad] = _varsayilanAidat;
                 });
                 _verileriKaydet();
@@ -458,10 +444,7 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani>
               value: widget.paraBirimi,
               isExpanded: true,
               items: _paraBirimleri
-                  .map((pb) => DropdownMenuItem<String>(
-                        value: pb['sembol'],
-                        child: Text(pb['ad']!),
-                      ))
+                  .map((pb) => DropdownMenuItem<String>(value: pb['sembol'], child: Text(pb['ad']!)))
                   .toList(),
               onChanged: (yeni) {
                 if (yeni != null) {
@@ -495,13 +478,11 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani>
     final gelir = _toplamGelir;
     final gider = _toplamGider;
     final net = devir + gelir - gider;
-
     String raporMetni = "--- $_yil ${_aylar[_ay]} ${t['report']} ---\n"
         "${t['devir']} $pb${devir.toStringAsFixed(0)}\n"
         "${t['gelir']} $pb${gelir.toStringAsFixed(0)}\n"
         "${t['gider']} -$pb${gider.toStringAsFixed(0)}\n"
         "${t['net']} $pb${net.toStringAsFixed(0)}\n";
-
     showDialog(
       context: context,
       builder: (c) => AlertDialog(
@@ -520,62 +501,25 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani>
       ),
     );
   }
-
   @override
   Widget build(BuildContext context) {
-    final devir = _devirHesapla(),
-        gelir = _toplamGelir,
-  @override
-  Widget build(BuildContext context) {
-    final devir = _devirHesapla(),
-        gelir = _toplamGelir,
-        gider = _toplamGider,
-        net = devir + gelir - gider,
-        pb = widget.paraBirimi;
-
+    final devir = _devirHesapla(), gelir = _toplamGelir, gider = _toplamGider, net = devir + gelir - gider, pb = widget.paraBirimi;
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          '${t['title']!} ($_yil)',
-          style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-          overflow: TextOverflow.ellipsis,
-        ),
+        title: Text('${t['title']!} ($_yil)', style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold), overflow: TextOverflow.ellipsis),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         actions: [
-          IconButton(
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(),
-            icon: const Icon(Icons.description, color: Colors.red, size: 22),
-            tooltip: t['report'],
-            onPressed: _raporPenceresiAc,
-          ),
+          IconButton(padding: EdgeInsets.zero, constraints: const BoxConstraints(), icon: const Icon(Icons.description, color: Colors.red, size: 22), tooltip: t['report'], onPressed: _raporPenceresiAc),
           const SizedBox(width: 8),
-          IconButton(
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(),
-            icon: const Icon(Icons.save, color: Colors.indigo, size: 22),
-            tooltip: t['save'],
-            onPressed: () => _verileriKaydet(bildirimGoster: true),
-          ),
+          IconButton(padding: EdgeInsets.zero, constraints: const BoxConstraints(), icon: const Icon(Icons.save, color: Colors.indigo, size: 22), tooltip: t['save'], onPressed: () => _verileriKaydet(bildirimGoster: true)),
           const SizedBox(width: 8),
-          IconButton(
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(),
-            icon: const Icon(Icons.settings, size: 22),
-            tooltip: t['settings'],
-            onPressed: _ayarlarPenceresi,
-          ),
+          IconButton(padding: EdgeInsets.zero, constraints: const BoxConstraints(), icon: const Icon(Icons.settings, size: 22), tooltip: t['settings'], onPressed: _ayarlarPenceresi),
           const SizedBox(width: 8),
           DropdownButton<String>(
             value: widget.seciliDil,
             underline: const SizedBox(),
             iconSize: 18,
-            items: _diller
-                .map((dil) => DropdownMenuItem<String>(
-                      value: dil,
-                      child: Text(dil, style: const TextStyle(fontSize: 11)),
-                    ))
-                .toList(),
+            items: _diller.map((dil) => DropdownMenuItem<String>(value: dil, child: Text(dil, style: const TextStyle(fontSize: 11)))).toList(),
             onChanged: (yeni) {
               if (yeni != null) {
                 widget.onDilDegistir(yeni);
@@ -595,32 +539,18 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani>
               children: [
                 DropdownButton<int>(
                   value: _yil,
-                  items: _yillar
-                      .map((y) => DropdownMenuItem<int>(
-                            value: y,
-                            child: Text('$y', style: const TextStyle(fontWeight: FontWeight.bold)),
-                          ))
-                      .toList(),
-                  onChanged: (v) {
-                    if (v != null) setState(() => _yil = v);
-                  },
+                  items: _yillar.map((y) => DropdownMenuItem<int>(value: y, child: Text('$y', style: const TextStyle(fontWeight: FontWeight.bold)))).toList(),
+                  onChanged: (v) { if (v != null) setState(() => _yil = v); },
                 ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Row(
-                      children: List.generate(
-                        12,
-                        (i) => Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 2),
-                          child: ChoiceChip(
-                            label: Text(_aylar[i]),
-                            selected: _ay == i,
-                            onSelected: (_) => setState(() => _ay = i),
-                          ),
-                        ),
-                      ),
+                      children: List.generate(12, (i) => Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 2),
+                        child: ChoiceChip(label: Text(_aylar[i]), selected: _ay == i, onSelected: (_) => setState(() => _ay = i)),
+                      )),
                     ),
                   ),
                 ),
@@ -634,39 +564,11 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani>
               padding: const EdgeInsets.all(12),
               child: Column(
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(t['devir']!, style: const TextStyle(color: Colors.amberAccent)),
-                      Text('$pb${devir.toStringAsFixed(0)}',
-                          style: const TextStyle(color: Colors.amberAccent, fontWeight: FontWeight.bold)),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(t['gelir']!, style: const TextStyle(color: Colors.greenAccent)),
-                      Text('$pb${gelir.toStringAsFixed(0)}',
-                          style: const TextStyle(color: Colors.greenAccent, fontWeight: FontWeight.bold)),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(t['gider']!, style: const TextStyle(color: Colors.redAccent)),
-                      Text('-$pb${gider.toStringAsFixed(0)}',
-                          style: const TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold)),
-                    ],
-                  ),
+                  Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [Text(t['devir']!, style: const TextStyle(color: Colors.amberAccent)), Text('$pb${devir.toStringAsFixed(0)}', style: const TextStyle(color: Colors.amberAccent, fontWeight: FontWeight.bold))]),
+                  Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [Text(t['gelir']!, style: const TextStyle(color: Colors.greenAccent)), Text('$pb${gelir.toStringAsFixed(0)}', style: const TextStyle(color: Colors.greenAccent, fontWeight: FontWeight.bold))]),
+                  Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [Text(t['gider']!, style: const TextStyle(color: Colors.redAccent)), Text('-$pb${gider.toStringAsFixed(0)}', style: const TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold))]),
                   const Divider(color: Colors.white24),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(t['net']!, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                      Text('$pb${net.toStringAsFixed(0)}',
-                          style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
-                    ],
-                  ),
+                  Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [Text(t['net']!, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)), Text('$pb${net.toStringAsFixed(0)}', style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold))]),
                 ],
               ),
             ),
@@ -678,14 +580,7 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani>
               children: [
                 Column(
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: ElevatedButton.icon(
-                        onPressed: _personelEklePenceresi,
-                        icon: const Icon(Icons.person_add),
-                        label: Text(t['addPerson']!),
-                      ),
-                    ),
+                    Padding(padding: const EdgeInsets.all(8.0), child: ElevatedButton.icon(onPressed: _personelEklePenceresi, icon: const Icon(Icons.person_add), label: Text(t['addPerson']!))),
                     Expanded(
                       child: ListView.builder(
                         itemCount: _personeller.length,
@@ -696,32 +591,14 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani>
                           return Card(
                             margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                             child: ListTile(
-                              leading: IconButton(
-                                icon: Icon(
-                                  odedi ? Icons.check_circle : Icons.radio_button_unchecked,
-                                  color: odedi ? Colors.green : Colors.grey,
-                                ),
-                                onPressed: () => _odemeDuzenlePenceresi(isim),
-                              ),
+                              leading: IconButton(icon: Icon(odedi ? Icons.check_circle : Icons.radio_button_unchecked, color: odedi ? Colors.green : Colors.grey), onPressed: () => _odemeDuzenlePenceresi(isim)),
                               title: Text(isim, style: const TextStyle(fontWeight: FontWeight.bold)),
                               subtitle: Text(odedi ? '${t['paid']} $pb$odenen' : t['waiting']!),
                               trailing: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  IconButton(
-                                    icon: const Icon(Icons.edit, color: Colors.blue),
-                                    onPressed: () => _odemeDuzenlePenceresi(isim),
-                                  ),
-                                  IconButton(
-                                    icon: const Icon(Icons.delete, color: Colors.grey),
-                                    onPressed: () {
-                                      setState(() {
-                                        _personeller.removeAt(index);
-                                        _aktifOdemeler.remove(isim);
-                                      });
-                                      _verileriKaydet();
-                                    },
-                                  ),
+                                  IconButton(icon: const Icon(Icons.edit, color: Colors.blue), onPressed: () => _odemeDuzenlePenceresi(isim)),
+                                  IconButton(icon: const Icon(Icons.delete, color: Colors.grey), onPressed: () { setState(() { _personeller.removeAt(index); _aktifOdemeler.remove(isim); }); _verileriKaydet(); }),
                                 ],
                               ),
                             ),
@@ -733,18 +610,7 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani>
                 ),
                 Column(
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: ElevatedButton.icon(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.red.shade600,
-                          foregroundColor: Colors.white,
-                        ),
-                        onPressed: _giderEklePenceresi,
-                        icon: const Icon(Icons.add),
-                        label: Text(t['addExpense']!),
-                      ),
-                    ),
+                    Padding(padding: const EdgeInsets.all(8.0), child: ElevatedButton.icon(style: ElevatedButton.styleFrom(backgroundColor: Colors.red.shade600, foregroundColor: Colors.white), onPressed: _giderEklePenceresi, icon: const Icon(Icons.add), label: Text(t['addExpense']!))),
                     Expanded(
                       child: _aktifGiderler.isEmpty
                           ? Center(child: Text(t['noExpense']!, style: const TextStyle(color: Colors.grey)))
@@ -760,17 +626,8 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani>
                                     trailing: Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
-                                        Text(
-                                          '-$pb${g.tutar.toStringAsFixed(0)}',
-                                          style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
-                                        ),
-                                        IconButton(
-                                          icon: const Icon(Icons.delete_outline, color: Colors.red),
-                                          onPressed: () {
-                                            setState(() => _aktifGiderler.removeAt(index));
-                                            _verileriKaydet();
-                                          },
-                                        ),
+                                        Text('-$pb${g.tutar.toStringAsFixed(0)}', style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
+                                        IconButton(icon: const Icon(Icons.delete_outline, color: Colors.red), onPressed: () { setState(() => _aktifGiderler.removeAt(index)); _verileriKaydet(); }),
                                       ],
                                     ),
                                   ),
