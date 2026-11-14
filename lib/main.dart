@@ -316,8 +316,8 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani>
     int y = 2006, a = 0;
     while (y < _yil || (y == _yil && a < _ay)) {
       String key = '$y-$a';
-      double g = (_odemeler[key]?.values.fold(0.0, (t, v) => t + v)) ?? 0.0;
-      double gi = (_giderler[key]?.fold(0.0, (t, x) => t + x.tutar)) ?? 0.0;
+      double g = (_odemeler[key]?.values.fold<double>(0.0, (t, v) => t + v)) ?? 0.0;
+      double gi = (_giderler[key]?.fold<double>(0.0, (t, x) => t + x.tutar)) ?? 0.0;
       toplamDevir += (g - gi);
       a++;
       if (a > 11) { a = 0; y++; }
