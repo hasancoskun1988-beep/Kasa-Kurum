@@ -77,9 +77,21 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani> with SingleTickerProvid
   List<String> _personeller = ['Ahmet Yılmaz', 'Mehmet Demir', 'Ayşe Kaya'];
   final Map<String, Map<String, double>> _odemeler = {};
   final Map<String, List<Gider>> _giderler = {};
+  
   final List<String> _diller = [
     'Türkçe', 'English', 'Deutsch', 'Français', 'Español', 'العربية',
     'Русский', '中文', '日本語', 'Português', 'Italiano', 'हिन्दी'
+  ];
+
+  final List> _paraBirimleri = [
+    {'sembol': '₺', 'ad': 'TRY - Türk Lirası (₺)'},
+    {'sembol': '\$', 'ad': 'USD - ABD Doları (\$)'},
+    {'sembol': '€', 'ad': 'EUR - Euro (€)'},
+    {'sembol': '£', 'ad': 'GBP - İngiliz Sterlini (£)'},
+    {'sembol': '₼', 'ad': 'AZN - Azerbaycan Manatı (₼)'},
+    {'sembol': 'CHF', 'ad': 'CHF - İsviçre Frangı (CHF)'},
+    {'sembol': '¥', 'ad': 'JPY/CNY - Yen / Yuan (¥)'},
+    {'sembol': '₽', 'ad': 'RUB - Rus Rublesi (₽)'},
   ];
 
   List<String> get _aylar {
@@ -106,7 +118,7 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani> with SingleTickerProvid
         'title': '2006-2050 Kasa Takip', 'devir': 'Geçen Aydan Devir:', 'gelir': 'Personel Geliri:',
         'gider': 'Aylık Gider:', 'net': 'Sonraki Aya Devir:', 'tab1': 'Personel Ekle ve Gelirler', 'tab2': 'Giderler',
         'addPerson': '+ Yeni Personel Ekle', 'addExpense': '+ Gider Ekle (Tarihli)', 'delete': 'Sil', 'save': 'Kaydet',
-        'cancel': 'İptal', 'settings': 'Ayarlar', 'defaultFee': 'Varsayılan Tutar:', 'currency': 'Para Birimi:',
+        'cancel': 'İptal', 'settings': 'Ayarlar', 'defaultFee': 'Varsayılan Tutar:', 'currency': 'Para Birimi Seçin:',
         'editPayment': 'Ödeme Tutarını Girin', 'paid': 'Ödenen:', 'waiting': 'Ödeme bekleniyor',
         'savedMsg': 'Tüm veriler telefon hafızasına kaydedildi!', 'report': 'Aylık Rapor / Çıktı',
         'fullName': 'Ad Soyad', 'desc': 'Açıklama (Örn: Elektrik)', 'amount': 'Tutar', 'date': 'Tarih (GG.AA.YYYY)',
@@ -120,7 +132,7 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani> with SingleTickerProvid
         'title': '2006-2050 Financial Tracking', 'devir': 'Previous Balance:', 'gelir': 'Personnel Income:',
         'gider': 'Expenses:', 'net': 'Next Month Balance:', 'tab1': 'Add Personnel & Income', 'tab2': 'Expenses',
         'addPerson': '+ Add Personnel', 'addExpense': '+ Add Expense', 'delete': 'Delete', 'save': 'Save',
-        'cancel': 'Cancel', 'settings': 'Settings', 'defaultFee': 'Default Amount:', 'currency': 'Currency Symbol:',
+        'cancel': 'Cancel', 'settings': 'Settings', 'defaultFee': 'Default Amount:', 'currency': 'Select Currency:',
         'editPayment': 'Enter Payment Amount', 'paid': 'Paid:', 'waiting': 'Waiting for payment',
         'savedMsg': 'All data saved to device!', 'report': 'Monthly Report',
         'fullName': 'Full Name', 'desc': 'Description (e.g. Electricity)', 'amount': 'Amount', 'date': 'Date (DD.MM.YYYY)',
@@ -129,146 +141,6 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani> with SingleTickerProvid
         'welcomeTitle': 'Welcome to Financial Tracking',
         'welcomeMsg': 'Easily manage adding personnel & income, monthly expenses, and carried-over balances from 2006 to 2050, and generate instant monthly reports.',
         'startBtn': 'Open Cashbook',
-      },
-      'Deutsch': {
-        'title': '2006-2050 Kassenbuch', 'devir': 'Übertrag Vormonat:', 'gelir': 'Personaleinnahmen:',
-        'gider': 'Ausgaben:', 'net': 'Übertrag Folgemonat:', 'tab1': 'Personal & Einnahmen', 'tab2': 'Ausgaben',
-        'addPerson': '+ Personal hinzufügen', 'addExpense': '+ Ausgabe hinzufügen', 'delete': 'Löschen', 'save': 'Speichern',
-        'cancel': 'Abbrechen', 'settings': 'Einstellungen', 'defaultFee': 'Standardbetrag:', 'currency': 'Währung:',
-        'editPayment': 'Zahlungsbetrag eingeben', 'paid': 'Bezahlt:', 'waiting': 'Zahlung ausstehend',
-        'savedMsg': 'Alle Daten gespeichert!', 'report': 'Monatsbericht',
-        'fullName': 'Vor- und Nachname', 'desc': 'Beschreibung (z.B. Strom)', 'amount': 'Betrag', 'date': 'Datum (TT.MM.JJJJ)',
-        'copyText': 'Text kopieren', 'copiedMsg': 'Bericht kopiert!', 'saveDownloads': 'In Downloads speichern',
-        'noExpense': 'Keine Ausgaben erfasst.',
-        'welcomeTitle': 'Willkommen im Kassenbuch',
-        'welcomeMsg': 'Verwalten Sie Personal & Einnahmen, monatliche Ausgaben und Überträge von 2006 bis 2050 und erstellen Sie sofortige Monatsberichte.',
-        'startBtn': 'Kasse öffnen',
-      },
-      'Français': {
-        'title': 'Suivi de Caisse 2006-2050', 'devir': 'Solde Précédent:', 'gelir': 'Revenus Personnel:',
-        'gider': 'Dépenses:', 'net': 'Solde Suivant:', 'tab1': 'Personnel et Revenus', 'tab2': 'Dépenses',
-        'addPerson': '+ Ajouter Personnel', 'addExpense': '+ Ajouter Dépense', 'delete': 'Supprimer', 'save': 'Enregistrer',
-        'cancel': 'Annuler', 'settings': 'Paramètres', 'defaultFee': 'Montant par défaut:', 'currency': 'Devise:',
-        'editPayment': 'Entrer le montant', 'paid': 'Payé:', 'waiting': 'En attente',
-        'savedMsg': 'Données enregistrées!', 'report': 'Rapport Mensuel',
-        'fullName': 'Nom et Prénom', 'desc': 'Description (ex: Électricité)', 'amount': 'Montant', 'date': 'Date (JJ.MM.AAAA)',
-        'copyText': 'Copier le texte', 'copiedMsg': 'Rapport copié!', 'saveDownloads': 'Enregistrer',
-        'noExpense': 'Aucune dépense enregistrée.',
-        'welcomeTitle': 'Bienvenue dans Suivi de Caisse',
-        'welcomeMsg': 'Gérez facilement l\'ajout de personnel et revenus, les dépenses mensuelles et les soldes reportés de 2006 à 2050.',
-        'startBtn': 'Ouvrir la Caisse',
-      },
-      'Español': {
-        'title': 'Control de Caja 2006-2050', 'devir': 'Saldo Anterior:', 'gelir': 'Ingresos Personal:',
-        'gider': 'Gastos:', 'net': 'Saldo Siguiente:', 'tab1': 'Personal e Ingresos', 'tab2': 'Gastos',
-        'addPerson': '+ Añadir Personal', 'addExpense': '+ Añadir Gasto', 'delete': 'Eliminar', 'save': 'Guardar',
-        'cancel': 'Cancelar', 'settings': 'Ajustes', 'defaultFee': 'Monto Predeterminado:', 'currency': 'Moneda:',
-        'editPayment': 'Ingrese el monto', 'paid': 'Pagado:', 'waiting': 'Pendiente de pago',
-        'savedMsg': '¡Datos guardados!', 'report': 'Informe Mensual',
-        'fullName': 'Nombre Completo', 'desc': 'Descripción (ej. Electricidad)', 'amount': 'Monto', 'date': 'Fecha (DD.MM.AAAA)',
-        'copyText': 'Copiar texto', 'copiedMsg': '¡Informe copiado!', 'saveDownloads': 'Guardar en Descargas',
-        'noExpense': 'No hay gastos registrados.',
-        'welcomeTitle': 'Bienvenido a Control de Caja',
-        'welcomeMsg': 'Gestione personal e ingresos, gastos mensuales y saldos acumulados entre 2006 y 2050 con informes instantáneos.',
-        'startBtn': 'Abrir Caja',
-      },
-      'العربية': {
-        'title': 'تتبع الصندوق 2006-2050', 'devir': 'الرصيد السابق:', 'gelir': 'دخل الموظفين:',
-        'gider': 'المصاريف:', 'net': 'الرصيد القادم:', 'tab1': 'إضافة موظف والإيرادات', 'tab2': 'المصاريف',
-        'addPerson': '+ إضافة موظف', 'addExpense': '+ إضافة مصروف', 'delete': 'حذف', 'save': 'حفظ',
-        'cancel': 'إلغاء', 'settings': 'الإعدادات', 'defaultFee': 'المبلغ الافتراضي:', 'currency': 'العملة:',
-        'editPayment': 'أدخل مبلغ الدفع', 'paid': 'مدفوع:', 'waiting': 'في انتظار الدفع',
-        'savedMsg': 'تم حفظ البيانات!', 'report': 'التقرير الشهري',
-        'fullName': 'الاسم الكامل', 'desc': 'الوصف (مثال: كهرباء)', 'amount': 'المبلغ', 'date': 'التاريخ',
-        'copyText': 'نسخ النص', 'copiedMsg': 'تم نسخ التقرير!', 'saveDownloads': 'حفظ في التنزيلات',
-        'noExpense': 'لا توجد مصاريف مسجلة.',
-        'welcomeTitle': 'مرحباً بكم في تتبع الصندوق',
-        'welcomeMsg': 'قم بإدارة الموظفين والإيرادات والمصاريف الشهرية والأرصدة المرحلة من 2006 إلى 2050 واستخراج التقارير بسهولة.',
-        'startBtn': 'فتح الصندوق',
-      },
-      'Русский': {
-        'title': 'Учет Кассы 2006-2050', 'devir': 'Остаток с прошлого мес.:', 'gelir': 'Доход от персонала:',
-        'gider': 'Расходы:', 'net': 'Остаток на след. мес.:', 'tab1': 'Персонал и доходы', 'tab2': 'Расходы',
-        'addPerson': '+ Добавить сотрудника', 'addExpense': '+ Добавить расход', 'delete': 'Удалить', 'save': 'Сохранить',
-        'cancel': 'Отмена', 'settings': 'Настройки', 'defaultFee': 'Сумма по умолчанию:', 'currency': 'Валюта:',
-        'editPayment': 'Введите сумму', 'paid': 'Оплачено:', 'waiting': 'Ожидает оплаты',
-        'savedMsg': 'Данные сохранены!', 'report': 'Ежемесячный отчет',
-        'fullName': 'Имя и Фамилия', 'desc': 'Описание (напр. Электричество)', 'amount': 'Сумма', 'date': 'Дата (ДД.ММ.ГГГГ)',
-        'copyText': 'Копировать текст', 'copiedMsg': 'Отчет скопирован!', 'saveDownloads': 'Сохранить в Загрузки',
-        'noExpense': 'Нет записанных расходов.',
-        'welcomeTitle': 'Добро пожаловать в Учет Кассы',
-        'welcomeMsg': 'Управляйте персоналом и доходами, расходами и переходящими остатками с 2006 по 2050 год и формируйте отчеты в один клик.',
-        'startBtn': 'Открыть кассу',
-      },
-      '中文': {
-        'title': '2006-2050 财务追踪', 'devir': '上月结转:', 'gelir': '人员收入:',
-        'gider': '支出:', 'net': '下月结转:', 'tab1': '添加人员与收入', 'tab2': '支出',
-        'addPerson': '+ 添加人员', 'addExpense': '+ 添加支出', 'delete': '删除', 'save': '保存',
-        'cancel': '取消', 'settings': '设置', 'defaultFee': '默认金额:', 'currency': '货币:',
-        'editPayment': '输入付款金额', 'paid': '已付:', 'waiting': '等待付款',
-        'savedMsg': '数据已保存！', 'report': '月度报告',
-        'fullName': '姓名', 'desc': '说明（例如：电费）', 'amount': '金额', 'date': '日期',
-        'copyText': '复制文本', 'copiedMsg': '报告已复制！', 'saveDownloads': '保存到下载',
-        'noExpense': '无支出记录。',
-        'welcomeTitle': '欢迎使用财务追踪系统',
-        'welcomeMsg': '轻松管理2006年至2050年的添加人员与收入、月度支出和结转余额，一键生成月度财务报告。',
-        'startBtn': '进入账本',
-      },
-      '日本語': {
-        'title': '2006-2050 出納管理', 'devir': '前月繰越:', 'gelir': '職員収入:',
-        'gider': '支出:', 'net': '次月繰越:', 'tab1': '職員追加と収入', 'tab2': '支出',
-        'addPerson': '+ 職員を追加', 'addExpense': '+ 支出を追加', 'delete': '削除', 'save': '保存',
-        'cancel': 'キャンセル', 'settings': '設定', 'defaultFee': 'デフォルト金額:', 'currency': '通貨:',
-        'editPayment': '支払金額を入力', 'paid': '支払済:', 'waiting': '支払い待ち',
-        'savedMsg': '保存されました！', 'report': '月次レポート',
-        'fullName': '氏名', 'desc': '内容（例：電気代）', 'amount': '金額', 'date': '日付',
-        'copyText': 'テキストをコピー', 'copiedMsg': 'レポートをコピーしました！', 'saveDownloads': 'ダウンロードに保存',
-        'noExpense': '記録された支出はありません。',
-        'welcomeTitle': '出納管理へようこそ',
-        'welcomeMsg': '2006年から2050年までの職員追加と収入、月次支出、繰越残高を簡単に管理し、ワンクリックで月次レポートを作成できます。',
-        'startBtn': '出納帳を開く',
-      },
-      'Português': {
-        'title': 'Controle de Caixa 2006-2050', 'devir': 'Saldo Anterior:', 'gelir': 'Receita Pessoal:',
-        'gider': 'Despesas:', 'net': 'Próximo Saldo:', 'tab1': 'Adicionar Pessoal e Receitas', 'tab2': 'Despesas',
-        'addPerson': '+ Adicionar Pessoal', 'addExpense': '+ Adicionar Despesa', 'delete': 'Excluir', 'save': 'Salvar',
-        'cancel': 'Cancelar', 'settings': 'Configurações', 'defaultFee': 'Valor Padrão:', 'currency': 'Moeda:',
-        'editPayment': 'Digite o valor', 'paid': 'Pago:', 'waiting': 'Aguardando pagamento',
-        'savedMsg': 'Dados salvos!', 'report': 'Relatório Mensal',
-        'fullName': 'Nome Completo', 'desc': 'Descrição (ex: Eletricidade)', 'amount': 'Valor', 'date': 'Data (DD.MM.AAAA)',
-        'copyText': 'Copiar Texto', 'copiedMsg': 'Relatório copiado!', 'saveDownloads': 'Salvar em Downloads',
-        'noExpense': 'Nenhuma despesa registrada.',
-        'welcomeTitle': 'Bem-vindo ao Controle de Caixa',
-        'welcomeMsg': 'Gerencie pessoal e receitas, despesas mensais e saldos acumulados de 2006 a 2050 com relatórios instantâneos.',
-        'startBtn': 'Abrir Caixa',
-      },
-      'Italiano': {
-        'title': 'Gestione Cassa 2006-2050', 'devir': 'Saldo Precedente:', 'gelir': 'Entrate Personale:',
-        'gider': 'Spese:', 'net': 'Saldo Successivo:', 'tab1': 'Aggiungi Personale ed Entrate', 'tab2': 'Spese',
-        'addPerson': '+ Aggiungi Personale', 'addExpense': '+ Aggiungi Spesa', 'delete': 'Elimina', 'save': 'Salva',
-        'cancel': 'Annulla', 'settings': 'Impostazioni', 'defaultFee': 'Importo Predefinito:', 'currency': 'Valuta:',
-        'editPayment': 'Inserisci importo', 'paid': 'Pagato:', 'waiting': 'In attesa',
-        'savedMsg': 'Dati salvati!', 'report': 'Report Mensile',
-        'fullName': 'Nome e Cognome', 'desc': 'Descrizione (es. Elettricità)', 'amount': 'Importo', 'date': 'Data (GG.MM.AAAA)',
-        'copyText': 'Copia Testo', 'copiedMsg': 'Report copiato!', 'saveDownloads': 'Salva nei Download',
-        'noExpense': 'Nessuna spesa registrata.',
-        'welcomeTitle': 'Benvenuti in Gestione Cassa',
-        'welcomeMsg': 'Gestisci facilmente personale ed entrate, spese mensili e saldi riportati dal 2006 al 2050 con report istantanei.',
-        'startBtn': 'Apri Cassa',
-      },
-      'हिन्दी': {
-        'title': '2006-2050 कैश ट्रैकिंग', 'devir': 'पिछला शेष:', 'gelir': 'कर्मचारी आय:',
-        'gider': 'खर्च:', 'net': 'अगला शेष:', 'tab1': 'कर्मचारी जोड़ें और आय', 'tab2': 'खर्च',
-        'addPerson': '+ कर्मचारी जोड़ें', 'addExpense': '+ खर्च जोड़ें', 'delete': 'हटाएं', 'save': 'सहेजें',
-        'cancel': 'रद्द करें', 'settings': 'सेटिंग्स', 'defaultFee': 'डिफ़ॉल्ट राशि:', 'currency': 'मुद्रा:',
-        'editPayment': 'भुगतान राशि दर्ज करें', 'paid': 'भुगतान किया:', 'waiting': 'भुगतान की प्रतीक्षा है',
-        'savedMsg': 'डेटा सहेजा गया!', 'report': 'मासिक रिपोर्ट',
-        'fullName': 'पूरा नाम', 'desc': 'विवरण (जैसे बिजली)', 'amount': 'राशि', 'date': 'तारीख',
-        'copyText': 'टेक्स्ट कॉपी करें', 'copiedMsg': 'रिपोर्ट कॉपी की गई!', 'saveDownloads': 'डाउनलोड में सहेजें',
-        'noExpense': 'कोई खर्च दर्ज नहीं है।',
-        'welcomeTitle': 'कैश ट्रैकिंग में आपका स्वागत है',
-        'welcomeMsg': '2006 से 2050 तक की कर्मचारी जोड़ें और आय, मासिक खर्च और शेष राशि को आसानी से प्रबंधित करें और तुरंत मासिक रिपोर्ट प्राप्त करें।',
-        'startBtn': 'कैशबुक खोलें',
       },
     };
     return sozlukler[widget.seciliDil] ?? sozlukler['English']!;
@@ -320,7 +192,7 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani> with SingleTickerProvid
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.paused || state == AppLifecycleState.inactive || state == AppLifecycleState.detached) {
+    if (state == AppLifecycleState.paused || state == AppLifecycleState.inactive) {
       _verileriKaydet();
     }
   }
@@ -342,3 +214,306 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani> with SingleTickerProvid
           (veri['giderler'] as Map<String, dynamic>).forEach((k, l) {
             _giderler[k] = (l as List).map((i) => Gider.fromJson(i as Map<String, dynamic>)).toList();
           });
+        }
+        setState(() {});
+      }
+    } catch (_) {}
+  }
+
+  Future<void> _verileriKaydet({bool bildirimGoster = false}) async {
+    try {
+      final veri = {
+        'personeller': _personeller,
+        'varsayilanAidat': _varsayilanAidat,
+        'odemeler': _odemeler.map((k, v) => MapEntry(k, v)),
+        'giderler': _giderler.map((k, l) => MapEntry(k, l.map((g) => g.toJson()).toList())),
+      };
+      await _kayitDosyasi.writeAsString(jsonEncode(veri));
+      if (bildirimGoster && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(t['savedMsg']!)));
+      }
+    } catch (_) {}
+  }
+
+  String get _donemKey => '$_yil-$_ay';
+  Map<String, double> get _aktifOdemeler => _odemeler.putIfAbsent(_donemKey, () => {});
+  List<Gider> get _aktifGiderler => _giderler.putIfAbsent(_donemKey, () => []);
+
+  double get _toplamGelir => _aktifOdemeler.values.fold(0.0, (a, b) => a + b);
+  double get _toplamGider => _aktifGiderler.fold(0.0, (a, b) => a + b.tutar);
+
+  double _devirHesapla() {
+    double toplamDevir = 0.0;
+    int y = 2006, a = 0;
+    while (y < _yil || (y == _yil && a < _ay)) {
+      String key = '$y-$a';
+      double g = (_odemeler[key]?.values.fold(0.0, (t, v) => t + v)) ?? 0.0;
+      double gi = (_giderler[key]?.fold(0.0, (t, x) => t + x.tutar)) ?? 0.0;
+      toplamDevir += (g - gi);
+      a++;
+      if (a > 11) { a = 0; y++; }
+    }
+    return toplamDevir;
+  }
+
+  void _personelEklePenceresi() {
+    final ctrl = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (c) => AlertDialog(
+        title: Text(t['addPerson']!),
+        content: TextField(controller: ctrl, decoration: InputDecoration(labelText: t['fullName']!)),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(c), child: Text(t['cancel']!)),
+          ElevatedButton(onPressed: () {
+            if (ctrl.text.isNotEmpty) {
+              setState(() {
+                _personeller.add(ctrl.text.trim());
+                _aktifOdemeler[ctrl.text.trim()] = _varsayilanAidat;
+              });
+              _verileriKaydet();
+            }
+            Navigator.pop(c);
+          }, child: Text(t['save']!)),
+        ],
+      ),
+    );
+  }
+
+  void _giderEklePenceresi() {
+    final aciklamaCtrl = TextEditingController();
+    final tutarCtrl = TextEditingController();
+    final tarihCtrl = TextEditingController(text: '${DateTime.now().day}.${DateTime.now().month}.${DateTime.now().year}');
+    showDialog(
+      context: context,
+      builder: (c) => AlertDialog(
+        title: Text(t['addExpense']!),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(controller: aciklamaCtrl, decoration: InputDecoration(labelText: t['desc']!)),
+            TextField(controller: tutarCtrl, keyboardType: TextInputType.number, decoration: InputDecoration(labelText: t['amount']!)),
+            TextField(controller: tarihCtrl, decoration: InputDecoration(labelText: t['date']!)),
+          ],
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(c), child: Text(t['cancel']!)),
+          ElevatedButton(onPressed: () {
+            if (aciklamaCtrl.text.isNotEmpty && tutarCtrl.text.isNotEmpty) {
+              setState(() {
+                _aktifGiderler.add(Gider(
+                  id: DateTime.now().millisecondsSinceEpoch.toString(),
+                  aciklama: aciklamaCtrl.text.trim(),
+                  tutar: double.tryParse(tutarCtrl.text.replaceAll(',', '.')) ?? 0.0,
+                  tarih: tarihCtrl.text.trim(),
+                ));
+              });
+              _verileriKaydet();
+            }
+            Navigator.pop(c);
+          }, child: Text(t['save']!)),
+        ],
+      ),
+    );
+  }
+
+  void _odemeDuzenlePenceresi(String isim) {
+    final ctrl = TextEditingController(text: (_aktifOdemeler[isim] ?? _varsayilanAidat).toString());
+    showDialog(
+      context: context,
+      builder: (c) => AlertDialog(
+        title: Text('$isim - ${t['editPayment']}'),
+        content: TextField(controller: ctrl, keyboardType: TextInputType.number, decoration: InputDecoration(labelText: t['amount']!)),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(c), child: Text(t['cancel']!)),
+          ElevatedButton(onPressed: () {
+            setState(() {
+              _aktifOdemeler[isim] = double.tryParse(ctrl.text.replaceAll(',', '.')) ?? 0.0;
+            });
+            _verileriKaydet();
+            Navigator.pop(c);
+          }, child: Text(t['save']!)),
+        ],
+      ),
+    );
+  }
+
+  void _ayarlarPenceresi() {
+    showDialog(
+      context: context,
+      builder: (c) => AlertDialog(
+        title: Text(t['settings']!),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(t['defaultFee']!),
+            TextField(
+              keyboardType: TextInputType.number,
+              controller: TextEditingController(text: _varsayilanAidat.toString()),
+              onChanged: (v) => _varsayilanAidat = double.tryParse(v) ?? _varsayilanAidat,
+            ),
+            const SizedBox(height: 16),
+            Text(t['currency']!),
+            DropdownButton<String>(
+              value: widget.paraBirimi,
+              isExpanded: true,
+              items: _paraBirimleri.map((pb) => DropdownMenuItem(value: pb['sembol'], child: Text(pb['ad']!))).toList(),
+              onChanged: (yeni) {
+                if (yeni != null) {
+                  widget.onParaBirimiDegistir(yeni);
+                  Navigator.pop(c);
+                }
+              },
+            ),
+          ],
+        ),
+        actions: [
+          ElevatedButton(onPressed: () => Navigator.pop(c), child: Text(t['save']!)),
+        ],
+      ),
+    );
+  }
+
+  void _raporPenceresiAc() {
+    final pb = widget.paraBirimi;
+    final devir = _devirHesapla();
+    final gelir = _toplamGelir;
+    final gider = _toplamGider;
+    final net = devir + gelir - gider;
+
+    String raporMetni = "--- ${_yil} ${_aylar[_ay]} ${t['report']} ---\n"
+        "${t['devir']} $pb${devir.toStringAsFixed(0)}\n"
+        "${t['gelir']} $pb${gelir.toStringAsFixed(0)}\n"
+        "${t['gider']} -$pb${gider.toStringAsFixed(0)}\n"
+        "${t['net']} $pb${net.toStringAsFixed(0)}\n";
+
+    showDialog(
+      context: context,
+      builder: (c) => AlertDialog(
+        title: Text(t['report']!),
+        content: SingleChildScrollView(child: Text(raporMetni)),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Clipboard.setData(ClipboardData(text: raporMetni));
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(t['copiedMsg']!)));
+            },
+            child: Text(t['copyText']!),
+          ),
+          ElevatedButton(onPressed: () => Navigator.pop(c), child: const Text('Tamam')),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final devir = _devirHesapla(), gelir = _toplamGelir, gider = _toplamGider, net = devir + gelir - gider, pb = widget.paraBirimi;
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(t['title']!, style: const TextStyle(fontSize: 14)),
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        actions: [
+          IconButton(icon: const Icon(Icons.description, color: Colors.red), tooltip: t['report'], onPressed: _raporPenceresiAc),
+          IconButton(icon: const Icon(Icons.save, color: Colors.indigo), tooltip: t['save'], onPressed: () => _verileriKaydet(bildirimGoster: true)),
+          IconButton(icon: const Icon(Icons.settings), tooltip: t['settings'], onPressed: _ayarlarPenceresi),
+          DropdownButton<String>(
+            value: widget.seciliDil,
+            underline: const SizedBox(),
+            items: _diller.map((dil) => DropdownMenuItem(value: dil, child: Text(dil, style: const TextStyle(fontSize: 11)))).toList(),
+            onChanged: (yeni) => widget.onDilDegistir(yeni!),
+          ),
+          const SizedBox(width: 4),
+        ],
+      ),
+      body: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            color: Colors.indigo.shade50,
+            child: Row(children: [
+              DropdownButton<int>(value: _yil, items: _yillar.map((y) => DropdownMenuItem(value: y, child: Text('$y', style: const TextStyle(fontWeight: FontWeight.bold)))).toList(), onChanged: (v) => setState(() => _yil = v!)),
+              const SizedBox(width: 8),
+              Expanded(
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(children: List.generate(12, (i) => Padding(padding: const EdgeInsets.symmetric(horizontal: 2), child: ChoiceChip(label: Text(_aylar[i]), selected: _ay == i, onSelected: (_) => setState(() => _ay = i))))),
+                ),
+              ),
+            ]),
+          ),
+          Card(
+            margin: const EdgeInsets.all(10),
+            color: Colors.indigo.shade800,
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: Column(children: [
+                Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [Text(t['devir']!, style: const TextStyle(color: Colors.amberAccent)), Text('$pb${devir.toStringAsFixed(0)}', style: const TextStyle(color: Colors.amberAccent, fontWeight: FontWeight.bold))]),
+                Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [Text(t['gelir']!, style: const TextStyle(color: Colors.greenAccent)), Text('$pb${gelir.toStringAsFixed(0)}', style: const TextStyle(color: Colors.greenAccent, fontWeight: FontWeight.bold))]),
+                Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [Text(t['gider']!, style: const TextStyle(color: Colors.redAccent)), Text('-$pb${gider.toStringAsFixed(0)}', style: const TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold))]),
+                const Divider(color: Colors.white24),
+                Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [Text(t['net']!, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)), Text('$pb${net.toStringAsFixed(0)}', style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold))]),
+              ]),
+            ),
+          ),
+          TabBar(controller: _tab, tabs: [Tab(text: t['tab1']!), Tab(text: t['tab2']!)]),
+          Expanded(
+            child: TabBarView(
+              controller: _tab,
+              children: [
+                Column(children: [
+                  Padding(padding: const EdgeInsets.all(8.0), child: ElevatedButton.icon(onPressed: _personelEklePenceresi, icon: const Icon(Icons.person_add), label: Text(t['addPerson']!))),
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: _personeller.length,
+                      itemBuilder: (_, index) {
+                        String isim = _personeller[index];
+                        double odenen = _aktifOdemeler[isim] ?? 0.0;
+                        bool odedi = odenen > 0;
+                        return Card(
+                          margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                          child: ListTile(
+                            leading: IconButton(icon: Icon(odedi ? Icons.check_circle : Icons.radio_button_unchecked, color: odedi ? Colors.green : Colors.grey), onPressed: () => _odemeDuzenlePenceresi(isim)),
+                            title: Text(isim, style: const TextStyle(fontWeight: FontWeight.bold)),
+                            subtitle: Text(odedi ? '${t['paid']} $pb$odenen' : t['waiting']!),
+                            trailing: Row(mainAxisSize: MainAxisSize.min, children: [
+                              IconButton(icon: const Icon(Icons.edit, color: Colors.blue), onPressed: () => _odemeDuzenlePenceresi(isim)),
+                              IconButton(icon: const Icon(Icons.delete, color: Colors.grey), onPressed: () { setState(() { _personeller.removeAt(index); _aktifOdemeler.remove(isim); }); _verileriKaydet(); }),
+                            ]),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ]),
+                Column(children: [
+                  Padding(padding: const EdgeInsets.all(8.0), child: ElevatedButton.icon(style: ElevatedButton.styleFrom(backgroundColor: Colors.red.shade600, foregroundColor: Colors.white), onPressed: _giderEklePenceresi, icon: const Icon(Icons.add), label: Text(t['addExpense']!))),
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: _aktifGiderler.length,
+                      itemBuilder: (_, index) {
+                        Gider g = _aktifGiderler[index];
+                        return Card(
+                          margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                          child: ListTile(
+                            title: Text(g.aciklama),
+                            subtitle: Text(g.tarih, style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                            trailing: Row(mainAxisSize: MainAxisSize.min, children: [
+                              Text('-$pb${g.tutar.toStringAsFixed(0)}', style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
+                              IconButton(icon: const Icon(Icons.delete_outline, color: Colors.red), onPressed: () { setState(() => _aktifGiderler.removeAt(index)); _verileriKaydet(); }),
+                            ]),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ]),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
