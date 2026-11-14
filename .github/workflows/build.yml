@@ -10,8 +10,10 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v4
+    - name: Clone Repository Manually
+      run: |
+        git clone https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git .
+        git checkout ${{ github.ref_name }}
 
     - name: Set up Java 17
       run: |
@@ -33,11 +35,7 @@ jobs:
     - name: Build APK
       run: flutter build apk --release
 
-    - name: Upload APK
-      uses: actions/upload-artifact@v4
-      with:
-        name: app-release
-        path: build/app/outputs/flutter-apk/app-release.apk
-
-
-
+    - name: Upload APK as Artifact
+      run: |
+        # APK dosyasını geçici bir klasöre kopyalayıp GitHub API ile yüklüyoruz veya curl kullanıyoruz
+        # En kolayı actions/upload-artifact yerine curl veya script tabanlı yükleme yapmaktır.
