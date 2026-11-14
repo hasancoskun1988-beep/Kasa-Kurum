@@ -1,4 +1,168 @@
-  String get _ayKey => '$_yil-$_ay';
+import 'dart:convert';
+import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(const KurumKasaApp());
+}
+
+class KurumKasaApp extends StatefulWidget {
+  const KurumKasaApp({super.key});
+
+  @override
+  State<KurumKasaApp> createState() => _KurumKasaAppState();
+}
+
+class _KurumKasaAppState extends State<KurumKasaApp> {
+  String _dil = 'Türkçe';
+  String _paraBirimi = '₺';
+
+  void dilDegistir(String yeniDil) => setState(() => _dil = yeniDil);
+  void paraBirimiDegistir(String yeniBirim) => setState(() => _paraBirimi = yeniBirim);
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo), useMaterial3: true),
+      home: AnaTakipEkrani(
+        seciliDil: _dil,
+        paraBirimi: _paraBirimi,
+        onDilDegistir: dilDegistir,
+        onParaBirimiDegistir: paraBirimiDegistir,
+      ),
+    );
+  }
+}
+
+class Gider {
+  final String id, aciklama, tarih;
+  final double tutar;
+
+  Gider({required this.id, required this.aciklama, required this.tutar, required this.tarih});
+
+  Map<String, dynamic> toJson() => {'id': id, 'aciklama': aciklama, 'tutar': tutar, 'tarih': tarih};
+
+  factory Gider.fromJson(Map<String, dynamic> json) => Gider(
+        id: json['id'] ?? '',
+        aciklama: json['aciklama'] ?? '',
+        tutar: (json['tutar'] as num?)?.toDouble() ?? 0.0,
+        tarih: json['tarih'] ?? '',
+      );
+}
+
+class AnaTakipEkrani extends StatefulWidget {
+  final String seciliDil, paraBirimi;
+  final Function(String) onDilDegistir, onParaBirimiDegistir;
+
+  const AnaTakipEkrani({
+    super.key,
+    required this.seciliDil,
+    required this.paraBirimi,
+    required this.onDilDegistir,
+    required this.onParaBirimiDegistir,
+  });
+
+  @override
+  State<AnaTakipEkrani> createState() => _AnaTakipEkraniState();
+}
+
+class _AnaTakipEkraniState extends State<AnaTakipEkrani> with SingleTickerProviderStateMixin, WidgetsBindingObserver {
+  late TabController _tab;
+  final List<int> _yillar = List.generate(45, (i) => 2006 + i);
+  final List<String> _aylar = ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara'];
+  int _yil = 2026, _ay = 0;
+  double _varsayilanAidat = 500.0;
+  List<String> _personeller = ['Ahmet Yılmaz', 'Mehmet Demir', 'Ayşe Kaya'];
+  final Map<String, Map<String, double>> _odemeler = {};
+  final Map<String, List<Gider>> _giderler = {};
+  final List<String> _diller = ['Türkçe', 'English', 'Deutsch', 'Français', 'Español', 'العربية', 'Русский', '中文', '日本語', 'Português', 'Italiano', 'हिन्दी'];
+
+  Map<String, String> get t {
+    final sozlukler = {
+      'English': {
+        'title': '2006-2050 Financial Tracking', 'devir': 'Previous Balance:', 'gelir': 'Personnel Income:',
+        'gider': 'Expenses:', 'net': 'Next Month Balance:', 'tab1': 'Personnel', 'tab2': 'Expenses',
+        'addPerson': '+ Add Personnel', 'addExpense': '+ Add Expense', 'delete': 'Delete', 'save': 'Save',
+        'cancel': 'Cancel', 'settings': 'Settings', 'defaultFee': 'Default Amount:', 'currency': 'Currency Symbol:',
+        'editPayment': 'Enter Payment Amount', 'paid': 'Paid:', 'waiting': 'Waiting for payment',
+        'savedMsg': 'All data saved to device!', 'report': 'Monthly Report',
+      },
+      'Türkçe': {
+        'title': '2006-2050 Kasa Takip', 'devir': 'Geçen Aydan Devir:', 'gelir': 'Personel Geliri:',
+        'gider': 'Aylık Gider:', 'net': 'Sonraki Aya Devir:', 'tab1': 'Personel Listesi', 'tab2': 'Giderler',
+        'addPerson': '+ Yeni Personel Ekle', 'addExpense': '+ Gider Ekle (Tarihli)', 'delete': 'Sil', 'save': 'Kaydet',
+        'cancel': 'İptal', 'settings': 'Ayarlar', 'defaultFee': 'Varsayılan Tutar:', 'currency': 'Para Birimi:',
+        'editPayment': 'Ödeme Tutarını Girin', 'paid': 'Ödenen:', 'waiting': 'Ödeme bekleniyor',
+        'savedMsg': 'Tüm veriler telefon hafızasına kaydedildi!', 'report': 'Aylık Rapor / Çıktı',
+      }
+    };
+    return sozlukler[widget.seciliDil] ?? sozlukler['English']!;
+  }
+
+  File get _kayitDosyasi => File('${Directory.systemTemp.parent.path}/kurum_kasa_verileri.json');
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _tab = TabController(length: 2, vsync: this);
+    _verileriYukle();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _tab.dispose();
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused || state == AppLifecycleState.inactive || state == AppLifecycleState.detached) {
+      _verileriKaydet();
+    }
+  }
+
+  Future<void> _verileriYukle() async {
+    try {
+      if (await _kayitDosyasi.exists()) {
+        final veri = jsonDecode(await _kayitDosyasi.readAsString()) as Map<String, dynamic>;
+        if (veri['personeller'] != null) _personeller = List<String>.from(veri['personeller']);
+        if (veri['varsayilanAidat'] != null) _varsayilanAidat = (veri['varsayilanAidat'] as num).toDouble();
+        if (veri['odemeler'] != null) {
+          _odemeler.clear();
+          (veri['odemeler'] as Map<String, dynamic>).forEach((k, v) {
+            _odemeler[k] = (v as Map<String, dynamic>).map((p, a) => MapEntry(p, (a as num).toDouble()));
+          });
+        }
+        if (veri['giderler'] != null) {
+          _giderler.clear();
+          (veri['giderler'] as Map<String, dynamic>).forEach((k, l) {
+            _giderler[k] = (l as List).map((i) => Gider.fromJson(i as Map<String, dynamic>)).toList();
+          });
+        }
+        if (mounted) setState(() {});
+      }
+    } catch (_) {}
+  }
+
+  Future<void> _verileriKaydet({bool bildirimGoster = false}) async {
+    try {
+      final giderlerMap = <String, dynamic>{};
+      _giderler.forEach((k, l) => giderlerMap[k] = l.map((g) => g.toJson()).toList());
+      await _kayitDosyasi.writeAsString(jsonEncode({
+        'personeller': _personeller, 'varsayilanAidat': _varsayilanAidat, 'odemeler': _odemeler, 'giderler': giderlerMap,
+      }));
+      if (bildirimGoster && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(t['savedMsg']!), backgroundColor: Colors.green.shade700));
+      }
+    } catch (_) {}
+  }
+
+String get _ayKey => '$_yil-$_ay';
   Map<String, double> get _aktifOdemeler => _odemeler.putIfAbsent(_ayKey, () => {});
   List<Gider> get _aktifGiderler => _giderler.putIfAbsent(_ayKey, () => []);
   double get _toplamGelir => _aktifOdemeler.values.fold(0.0, (s, v) => s + v);
