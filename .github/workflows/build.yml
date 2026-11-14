@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
 
     steps:
     - name: Checkout Repository
@@ -19,11 +19,11 @@ jobs:
         distribution: 'zulu'
         java-version: '17'
 
-    - name: Set up Flutter
-      uses: subosito/flutter-action@v2
-      with:
-        flutter-version: '3.22.2'
-        channel: 'stable'
+    - name: Install Flutter
+      run: |
+        git clone https://github.com/flutter/flutter.git -b 3.22.2 --depth 1 _flutter
+        echo "$PWD/_flutter/bin" >> $GITHUB_PATH
+        flutter doctor
 
     - name: Install Dependencies
       run: flutter pub get
