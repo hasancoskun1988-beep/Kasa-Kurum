@@ -8,9 +8,15 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
-      - run: flutter create .
-      - run: flutter build apk --release
-      - uses: actions/upload-artifact@v4
+      - name: Projeyi Hazirla ve Derle
+        run: |
+          mkdir -p gecici_proje
+          cd gecici_proje
+          flutter create --project-name kurum_kasa .
+          cp ../lib/main.dart lib/main.dart
+          flutter build apk --release
+      - name: APK Yukle
+        uses: actions/upload-artifact@v4
         with:
           name: kurum-kasa-apk
-          path: build/app/outputs/flutter-apk/app-release.apk
+          path: gecici_proje/build/app/outputs/flutter-apk/app-release.apk
