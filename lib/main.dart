@@ -46,10 +46,10 @@ class Gider {
   Map<String, dynamic> toJson() => {'id': id, 'aciklama': aciklama, 'tutar': tutar, 'tarih': tarih};
 
   factory Gider.fromJson(Map<String, dynamic> json) => Gider(
-        id: json['id'] ?? '',
-        aciklama: json['aciklama'] ?? '',
+        id: json['id']?.toString() ?? '',
+        aciklama: json['aciklama']?.toString() ?? '',
         tutar: (json['tutar'] as num?)?.toDouble() ?? 0.0,
-        tarih: json['tarih'] ?? '',
+        tarih: json['tarih']?.toString() ?? '',
       );
 }
 
@@ -224,19 +224,31 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani> with SingleTickerProvid
   Future<void> _verileriYukle() async {
     try {
       if (await _kayitDosyasi.exists()) {
-        final veri = jsonDecode(await _kayitDosyasi.readAsString()) as Map<String, dynamic>;
-        if (veri['personeller'] != null) _personeller = List<String>.from(veri['personeller']);
-        if (veri['varsayilanAidat'] != null) _varsayilanAidat = (veri['varsayilanAidat'] as num).toDouble();
+        final Map<String, dynamic> veri = jsonDecode(await _kayitDosyasi.readAsString()) as Map<String, dynamic>;
+        
+        if (veri['personeller'] != null) {
+          _personeller = List<String>.from(veri['personeller'] as List);
+        }
+        if (veri['varsayilanAidat'] != null) {
+          _varsayilanAidat = (veri['varsayilanAidat'] as num).toDouble();
+        }
         if (veri['odemeler'] != null) {
           _odemeler.clear();
           (veri['odemeler'] as Map<String, dynamic>).forEach((k, v) {
-            _odemeler[k] = (v as Map<String, dynamic>).map((p, a) => MapEntry(p, (a as num).toDouble()));
+            final Map<String, double> subMap = {};
+            (v as Map<String, dynamic>).forEach((p, a) {
+              subMap[p] = (a as num).toDouble();
+            });
+            _odemeler[k] = subMap;
           });
         }
         if (veri['giderler'] != null) {
           _giderler.clear();
           (veri['giderler'] as Map<String, dynamic>).forEach((k, l) {
-            _giderler[k] = (l as List).map((i) => Gider.fromJson(i as Map<String, dynamic>)).toList();
+            final List<Gider> giderListesi = (l as List)
+                .map((i) => Gider.fromJson(i as Map<String, dynamic>))
+                .toList();
+            _giderler[k] = giderListesi;
           });
         }
         setState(() {});
@@ -246,10 +258,10 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani> with SingleTickerProvid
 
   Future<void> _verileriKaydet({bool bildirimGoster = false}) async {
     try {
-      final veri = {
+      final Map<String, dynamic> veri = {
         'personeller': _personeller,
         'varsayilanAidat': _varsayilanAidat,
-        'odemeler': _odemeler.map((k, v) => MapEntry(k, v)),
+        'odemeler': _odemeler,
         'giderler': _giderler.map((k, l) => MapEntry(k, l.map((g) => g.toJson()).toList())),
       };
       await _kayitDosyasi.writeAsString(jsonEncode(veri));
@@ -271,7 +283,7 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani> with SingleTickerProvid
     int y = 2006, a = 0;
     while (y < _yil || (y == _yil && a < _ay)) {
       String key = '$y-$a';
-      double g = (_odemeler[key]?.values.fold(0.0, (t, v) => t! + v)) ?? 0.0;
+      double g = (_odemeler[key]?.values.fold(0.0, (t, v) => (t ?? 0.0) + v)) ?? 0.0;
       double gi = (_giderler[key]?.fold(0.0, (t, x) => t + x.tutar)) ?? 0.0;
       toplamDevir += (g - gi);
       a++;
@@ -541,4 +553,3 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani> with SingleTickerProvid
     );
   }
 }
-
