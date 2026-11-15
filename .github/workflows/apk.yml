@@ -28,7 +28,7 @@ jobs:
 
     - name: Recreate Android Directory
       run: |
-        flutter create . --platforms=android --project-name=kurum_kasa --org=com.kurumkasa.app
+        flutter create . --platforms=android --project-name=global_financial_tracker --org=com.globalfinancialtracker.app
 
     - name: Install Dependencies
       run: flutter pub get
@@ -44,3 +44,4 @@ jobs:
       with:
         name: release-apk
         path: build/app/outputs/flutter-apk/app-release.apk
+
