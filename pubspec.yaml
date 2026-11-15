@@ -21,7 +21,7 @@ dev_dependencies:
 flutter_launcher_icons:
   image_path: "assets/icon.jpg"
   android: true
-  ios: true
+  ios: false # iOS'u kapatıyoruz, sadece Android için üretecek
 
 flutter:
   uses-material-design: true
