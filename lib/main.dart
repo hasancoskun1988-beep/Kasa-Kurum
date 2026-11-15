@@ -41,6 +41,7 @@ class _GlobalFinancialTrackerAppState extends State<GlobalFinancialTrackerApp> {
     );
   }
 }
+
 class Gider {
   final String id, aciklama, tarih;
   final double tutar;
@@ -97,6 +98,7 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani>
     'Türkçe', 'English', 'Deutsch', 'Français', 'Español', 'العربية',
     'Русский', '中文', '日本語', 'Português', 'Italiano', 'हिन्दी'
   ];
+
   final List> _paraBirimleri = [
     {'sembol': '₺', 'ad': 'TRY - Türk Lirası (₺)'},
     {'sembol': '\$', 'ad': 'USD - ABD Doları (\$)'},
@@ -122,6 +124,34 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani>
     {'sembol': 'с', 'ad': 'KGS - Kırgızistan Somu (с)'},
     {'sembol': 'soʻm', 'ad': 'UZS - Özbekistan Somu (soʻm)'},
     {'sembol': '₾', 'ad': 'GEL - Gürcistan Larisi (₾)'},
+    {'sembol': '₪', 'ad': 'ILS - İsrail Şekeli (₪)'},
+    {'sembol': 'R', 'ad': 'ZAR - Güney Afrika Randı (R)'},
+    {'sembol': '₦', 'ad': 'NGN - Nijerya Nairası (₦)'},
+    {'sembol': '฿', 'ad': 'THB - Tayland Bahtı (฿)'},
+    {'sembol': 'Rp', 'ad': 'IDR - Endonezya Rupiahı (Rp)'},
+    {'sembol': 'RM', 'ad': 'MYR - Malezya Ringgiti (RM)'},
+    {'sembol': '₱', 'ad': 'PHP - Filipin Pesosu (₱)'},
+    {'sembol': '₫', 'ad': 'VND - Vietnam Dongu (₫)'},
+  ];
+
+  List<String> get _aylar {
+    final aylarMap = {
+      'Türkçe': ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara'],
+      'English': ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+      'Deutsch': ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'],
+      'Français': ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc'],
+      'Español': ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+      'العربية': ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'],
+      'Русский': ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
+      '中文': ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+      '日本語': ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+      'Português': ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+      'Italiano': ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu', 'Lug', 'Ago', 'Set', 'Ott', 'Nov', 'Dic'],
+      'हिन्दी': ['जन', 'फ़र', 'मार्च', 'अप्रै', 'मई', 'जून', 'जुला', 'अग', 'सित', 'अक्टू', 'नव', 'दिस'],
+    };
+    return aylarMap[widget.seciliDil] ?? aylarMap['English']!;
+  }
+
   Map<String, String> get t {
     final sozlukler = {
       'Türkçe': {
@@ -215,6 +245,7 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani>
       _verileriKaydet();
     }
   }
+
   Future<void> _verileriYukle() async {
     try {
       final dosya = await _kayitDosyasi;
@@ -271,10 +302,6 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani>
       final Map<String, dynamic> veri = {
         'dil': widget.seciliDil,
         'paraBirimi': widget.paraBirimi,
-        'sonYil': _
-      final Map<String, dynamic> veri = {
-        'dil': widget.seciliDil,
-        'paraBirimi': widget.paraBirimi,
         'sonYil': _yil,
         'sonAy': _ay,
         'personeller': _personeller,
@@ -287,6 +314,37 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani>
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(t['savedMsg']!)));
       }
     } catch (_) {}
+  }
+
+  String get _donemKey => '$_yil-$_ay';
+  Map<String, double> get _aktifOdemeler => _odemeler.putIfAbsent(_donemKey, () => {});
+  List<Gider> get _aktifGiderler => _giderler.putIfAbsent(_donemKey, () => []);
+  double get _toplamGelir => _aktifOdemeler.values.fold(0.0, (a, b) => a + b);
+  double get _toplamGider => _aktifGiderler.fold(0.0, (a, b) => a + b.tutar);
+
+  double _devirHesapla() {
+    double toplamDevir = 0.0;
+    int y = 2006, a = 0;
+    while (y < _yil || (y == _yil && a < _ay)) {
+      String key = '$y-$a';
+      double g = (_odemeler[key]?.values.fold<double>(0.0, (t, v) => t + v)) ?? 0.0;
+      double gi = (_giderler[key]?.fold<double>(0.0, (t, x) => t + x.tutar)) ?? 0.0;
+      toplamDevir += (g - gi);
+      a++;
+      if (a > 11) { a = 0; y++; }
+    }
+    return toplamDevir;
+  }
+
+  double _metniSayiyaCevir(String metin) {
+    String temiz = metin.trim();
+    if (temiz.isEmpty) return 0.0;
+    if (temiz.contains('.') && temiz.contains(',')) {
+      temiz = temiz.replaceAll('.', '').replaceAll(',', '.');
+    } else if (temiz.contains(',')) {
+      temiz = temiz.replaceAll(',', '.');
+    }
+    return double.tryParse(temiz) ?? 0.0;
   }
 
   void _personelEklePenceresi() {
@@ -368,7 +426,7 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani>
     showDialog(
       context: context,
       builder: (c) => AlertDialog(
-        title: Text('$isim -${t['editPayment']}'),
+        title: Text('$isim - ${t['editPayment']}'),
         content: TextField(
           controller: ctrl,
           keyboardType: const TextInputType.numberWithOptions(decimal: true),
@@ -429,8 +487,7 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani>
           ElevatedButton(
             onPressed: () {
               setState(() {
-                _varsayilanAidat = _
-              _varsayilanAidat = _metniSayiyaCevir(aidatCtrl.text);
+                _varsayilanAidat = _metniSayiyaCevir(aidatCtrl.text);
               });
               _verileriKaydet(bildirimGoster: true);
               Navigator.pop(c);
@@ -448,7 +505,7 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani>
     final gelir = _toplamGelir;
     final gider = _toplamGider;
     final net = devir + gelir - gider;
-    String raporMetni = "--- $_yil ${_aylar[_ay]}${t['report']} ---\n"
+    String raporMetni = "--- $_yil ${_aylar[_ay]} ${t['report']} ---\n"
         "${t['devir']} $pb${devir.toStringAsFixed(2)}\n"
         "${t['gelir']} $pb${gelir.toStringAsFixed(2)}\n"
         "${t['gider']} -$pb${gider.toStringAsFixed(2)}\n"
@@ -548,7 +605,7 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani>
               child: Column(
                 children: [
                   Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [Text(t['devir']!, style: const TextStyle(color: Colors.amberAccent)), Text('$pb${devir.toStringAsFixed(2)}', style: const TextStyle(color: Colors.amberAccent, fontWeight: FontWeight.bold))]),
-                  Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [Text(t['gelir']!, style: const TextStyle(color:Colors.greenAccent)), Text('$pb${gelir.toStringAsFixed(2)}', style: const TextStyle(color: Colors.greenAccent, fontWeight: FontWeight.bold))]),
+                  Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [Text(t['gelir']!, style: const TextStyle(color: Colors.greenAccent)), Text('$pb${gelir.toStringAsFixed(2)}', style: const TextStyle(color: Colors.greenAccent, fontWeight: FontWeight.bold))]),
                   Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [Text(t['gider']!, style: const TextStyle(color: Colors.redAccent)), Text('-$pb${gider.toStringAsFixed(2)}', style: const TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold))]),
                   const Divider(color: Colors.white24),
                   Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [Text(t['net']!, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)), Text('$pb${net.toStringAsFixed(2)}', style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold))]),
@@ -593,8 +650,7 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani>
                 ),
                 Column(
                   children: [
-                    Padding(padding: const EdgeInsets.all(8.0), child: ElevatedButton.icon(style: ElevatedButton.styleFrom(backgroundColor: Colors.red.shade600, foregroundColor: Colors.white), onPressed:
-_giderEklePenceresi, icon: const Icon(Icons.add), label: Text(t['addExpense']!))),
+                    Padding(padding: const EdgeInsets.all(8.0), child: ElevatedButton.icon(style: ElevatedButton.styleFrom(backgroundColor: Colors.red.shade600, foregroundColor: Colors.white), onPressed: _giderEklePenceresi, icon: const Icon(Icons.add), label: Text(t['addExpense']!))),
                     Expanded(
                       child: _aktifGiderler.isEmpty
                           ? Center(child: Text(t['noExpense']!, style: const TextStyle(color: Colors.grey)))
@@ -611,13 +667,7 @@ _giderEklePenceresi, icon: const Icon(Icons.add), label: Text(t['addExpense']!))
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
                                         Text('-$pb${g.tutar.toStringAsFixed(2)}', style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
-                                        IconButton(
-                                          icon: const Icon(Icons.delete_outline, color: Colors.red),
-                                          onPressed: () {
-                                            setState(() => _aktifGiderler.removeAt(index));
-                                            _verileriKaydet();
-                                          },
-                                        ),
+                                        IconButton(icon: const Icon(Icons.delete_outline, color: Colors.red), onPressed: () { setState(() => _aktifGiderler.removeAt(index)); _verileriKaydet(); }),
                                       ],
                                     ),
                                   ),
@@ -635,9 +685,3 @@ _giderEklePenceresi, icon: const Icon(Icons.add), label: Text(t['addExpense']!))
     );
   }
 }
-
-
-
-
-
-
