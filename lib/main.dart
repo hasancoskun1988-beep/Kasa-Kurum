@@ -68,7 +68,7 @@ class Gider {
       );
 }
 
-const List<String> _sabitDiller = [
+final List<String> _sabitDiller = [
   'Türkçe', 'English', 'Deutsch', 'Français', 'Español', 'العربية',
   'Русский', '中文', '日本語', 'Português', 'Italiano', 'हिन्दी'
 ];
@@ -127,7 +127,7 @@ class AnaTakipEkrani extends StatefulWidget {
 class _AnaTakipEkraniState extends State<AnaTakipEkrani>
     with SingleTickerProviderStateMixin, WidgetsBindingObserver {
   late TabController _tab;
-  final List<int> _yillar = List.generate(45, (i) => 2006 + i);
+  late final List<int> _yillar;
   int _yil = 2026, _ay = 0;
   double _varsayilanAidat = 500.0;
   List<String> _personeller = ['Ahmet Yılmaz', 'Mehmet Demir', 'Ayşe Kaya'];
@@ -197,6 +197,7 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani>
   @override
   void initState() {
     super.initState();
+    _yillar = List.generate(45, (i) => 2006 + i);
     WidgetsBinding.instance.addObserver(this);
     _tab = TabController(length: 2, vsync: this);
     _verileriYukle().then((_) {
@@ -270,7 +271,7 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani>
           _ay = (veri['sonAy'] as num).toInt();
         }
         if (veri['personeller'] != null) {
-          _personeller = List<String>.from(veri['personeller']);
+          _personeller = List<String>.from((veri['personeller'] as List).map((e) => e.toString()));
         }
         if (veri['varsayilanAidat'] != null) {
           _varsayilanAidat = (veri['varsayilanAidat'] as num).toDouble();
