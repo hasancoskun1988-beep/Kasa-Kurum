@@ -41,7 +41,6 @@ class _GlobalFinancialTrackerAppState extends State<GlobalFinancialTrackerApp> {
     );
   }
 }
-
 class Gider {
   final String id, aciklama, tarih;
   final double tutar;
@@ -67,6 +66,7 @@ class Gider {
         tarih: json['tarih']?.toString() ?? '',
       );
 }
+
 class AnaTakipEkrani extends StatefulWidget {
   final String seciliDil, paraBirimi;
   final Function(String) onDilDegistir, onParaBirimiDegistir;
@@ -97,7 +97,6 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani>
     'Türkçe', 'English', 'Deutsch', 'Français', 'Español', 'العربية',
     'Русский', '中文', '日本語', 'Português', 'Italiano', 'हिन्दी'
   ];
-
   final List> _paraBirimleri = [
     {'sembol': '₺', 'ad': 'TRY - Türk Lirası (₺)'},
     {'sembol': '\$', 'ad': 'USD - ABD Doları (\$)'},
@@ -123,6 +122,173 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani>
     {'sembol': 'с', 'ad': 'KGS - Kırgızistan Somu (с)'},
     {'sembol': 'soʻm', 'ad': 'UZS - Özbekistan Somu (soʻm)'},
     {'sembol': '₾', 'ad': 'GEL - Gürcistan Larisi (₾)'},
+  Map<String, String> get t {
+    final sozlukler = {
+      'Türkçe': {
+        'title': 'Global Financial Tracker', 'devir': 'Geçen Aydan Devir:', 'gelir': 'Personel Geliri:',
+        'gider': 'Aylık Gider:', 'net': 'Sonraki Aya Devir:', 'tab1': 'Personel ve Gelirler', 'tab2': 'Giderler',
+        'addPerson': '+ Yeni Personel Ekle', 'addExpense': '+ Gider Ekle (Tarihli)', 'delete': 'Sil', 'save': 'Kaydet',
+        'cancel': 'İptal', 'settings': 'Ayarlar', 'defaultFee': 'Varsayılan Tutar:', 'currency': 'Para Birimi Seçin:',
+        'editPayment': 'Ödeme Tutarını Girin', 'paid': 'Ödenen:', 'waiting': 'Ödeme bekleniyor',
+        'savedMsg': 'Tüm veriler kalıcı hafızaya kaydedildi!', 'report': 'Aylık Rapor',
+        'fullName': 'Ad Soyad', 'desc': 'Açıklama (Örn: Elektrik)', 'amount': 'Tutar', 'date': 'Tarih (GG.AA.YYYY)',
+        'copyText': 'Metni Kopyala', 'copiedMsg': 'Rapor kopyalandı!', 'ok': 'Tamam',
+        'noExpense': 'Kayıtlı gider yok.',
+        'welcomeTitle': 'Global Financial Tracker\'a Hoş Geldiniz',
+        'welcomeMsg': '2006-2050 yılları arasındaki personel gelirlerinizi, aylık giderlerinizi ve devir bakiyelerinizi tek ekrandan yönetebilir, anında kasa raporu alabilirsiniz.',
+        'startBtn': 'Kasayı Aç',
+      },
+      'English': {
+        'title': 'Global Financial Tracker', 'devir': 'Previous Balance:', 'gelir': 'Personnel Income:',
+        'gider': 'Expenses:', 'net': 'Next Month Balance:', 'tab1': 'Personnel & Income', 'tab2': 'Expenses',
+        'addPerson': '+ Add Personnel', 'addExpense': '+ Add Expense', 'delete': 'Delete', 'save': 'Save',
+        'cancel': 'Cancel', 'settings': 'Settings', 'defaultFee': 'Default Amount:', 'currency': 'Select Currency:',
+        'editPayment': 'Enter Payment Amount', 'paid': 'Paid:', 'waiting': 'Waiting for payment',
+        'savedMsg': 'All data saved permanently!', 'report': 'Monthly Report',
+        'fullName': 'Full Name', 'desc': 'Description (e.g. Electricity)', 'amount': 'Amount', 'date': 'Date (DD.MM.YYYY)',
+        'copyText': 'Copy Text', 'copiedMsg': 'Report copied!', 'ok': 'OK',
+        'noExpense': 'No recorded expenses.',
+        'welcomeTitle': 'Welcome to Global Financial Tracker',
+        'welcomeMsg': 'Easily manage personnel income, monthly expenses, and carried-over balances from 2006 to 2050, and generate instant monthly reports.',
+        'startBtn': 'Open Cashbook',
+      },
+    };
+    return sozlukler[widget.seciliDil] ?? sozlukler['English']!;
+  }
+
+  Future<File> get _kayitDosyasi async {
+    final dizin = await getApplicationDocumentsDirectory();
+    return File('${dizin.path}/global_financial_tracker_verileri.json');
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _tab = TabController(length: 2, vsync: this);
+    _verileriYukle().then((_) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => _karsilamaMesajiGoster());
+    });
+  }
+
+  void _karsilamaMesajiGoster() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (c) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Row(
+          children: [
+            const Icon(Icons.account_balance_wallet, color: Colors.indigo, size: 28),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                t['welcomeTitle']!,
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.indigo),
+              ),
+            ),
+          ],
+        ),
+        content: Text(t['welcomeMsg']!, style: const TextStyle(fontSize: 14, height: 1.4)),
+        actions: [
+          ElevatedButton.icon(
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.indigo, foregroundColor: Colors.white),
+            onPressed: () => Navigator.pop(c),
+            icon: const Icon(Icons.check_circle_outline),
+            label: Text(t['startBtn']!),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _tab.dispose();
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused || state == AppLifecycleState.inactive) {
+      _verileriKaydet();
+    }
+  }
+  Future<void> _verileriYukle() async {
+    try {
+      final dosya = await _kayitDosyasi;
+      if (await dosya.exists()) {
+        final Map<String, dynamic> veri = jsonDecode(await dosya.readAsString());
+        if (veri['dil'] != null && _diller.contains(veri['dil'])) {
+          widget.onDilDegistir(veri['dil'].toString());
+        }
+        if (veri['paraBirimi'] != null) {
+          String kayitliPb = veri['paraBirimi'].toString();
+          if (_paraBirimleri.any((e) => e['sembol'] == kayitliPb)) {
+            widget.onParaBirimiDegistir(kayitliPb);
+          }
+        }
+        if (veri['sonYil'] != null) {
+          _yil = (veri['sonYil'] as num).toInt();
+        }
+        if (veri['sonAy'] != null) {
+          _ay = (veri['sonAy'] as num).toInt();
+        }
+        if (veri['personeller'] != null) {
+          _personeller = List<String>.from(veri['personeller']);
+        }
+        if (veri['varsayilanAidat'] != null) {
+          _varsayilanAidat = (veri['varsayilanAidat'] as num).toDouble();
+        }
+        if (veri['odemeler'] != null) {
+          _odemeler.clear();
+          (veri['odemeler'] as Map).forEach((k, v) {
+            final Map<String, double> subMap = {};
+            (v as Map).forEach((p, a) {
+              subMap[p.toString()] = (a as num).toDouble();
+            });
+            _odemeler[k.toString()] = subMap;
+          });
+        }
+        if (veri['giderler'] != null) {
+          _giderler.clear();
+          (veri['giderler'] as Map).forEach((k, l) {
+            final List<Gider> giderListesi = (l as List)
+                .map((i) => Gider.fromJson(Map<String, dynamic>.from(i as Map)))
+                .toList();
+            _giderler[k.toString()] = giderListesi;
+          });
+        }
+        if (mounted) setState(() {});
+      }
+    } catch (_) {}
+  }
+
+  Future<void> _verileriKaydet({bool bildirimGoster = false}) async {
+    try {
+      final dosya = await _kayitDosyasi;
+      final Map<String, dynamic> veri = {
+        'dil': widget.seciliDil,
+        'paraBirimi': widget.paraBirimi,
+        'sonYil': _
+      final Map<String, dynamic> veri = {
+        'dil': widget.seciliDil,
+        'paraBirimi': widget.paraBirimi,
+        'sonYil': _yil,
+        'sonAy': _ay,
+        'personeller': _personeller,
+        'varsayilanAidat': _varsayilanAidat,
+        'odemeler': _odemeler,
+        'giderler': _giderler.map((k, l) => MapEntry(k, l.map((g) => g.toJson()).toList())),
+      };
+      await dosya.writeAsString(jsonEncode(veri));
+      if (bildirimGoster && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(t['savedMsg']!)));
+      }
+    } catch (_) {}
+  }
+
   void _personelEklePenceresi() {
     final ctrl = TextEditingController();
     showDialog(
@@ -202,7 +368,7 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani>
     showDialog(
       context: context,
       builder: (c) => AlertDialog(
-        title: Text('$isim - ${t['editPayment']}'),
+        title: Text('$isim -${t['editPayment']}'),
         content: TextField(
           controller: ctrl,
           keyboardType: const TextInputType.numberWithOptions(decimal: true),
@@ -263,7 +429,8 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani>
           ElevatedButton(
             onPressed: () {
               setState(() {
-                _varsayilanAidat = _metniSayiyaCevir(aidatCtrl.text);
+                _varsayilanAidat = _
+              _varsayilanAidat = _metniSayiyaCevir(aidatCtrl.text);
               });
               _verileriKaydet(bildirimGoster: true);
               Navigator.pop(c);
@@ -281,7 +448,7 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani>
     final gelir = _toplamGelir;
     final gider = _toplamGider;
     final net = devir + gelir - gider;
-    String raporMetni = "--- $_yil ${_aylar[_ay]} ${t['report']} ---\n"
+    String raporMetni = "--- $_yil ${_aylar[_ay]}${t['report']} ---\n"
         "${t['devir']} $pb${devir.toStringAsFixed(2)}\n"
         "${t['gelir']} $pb${gelir.toStringAsFixed(2)}\n"
         "${t['gider']} -$pb${gider.toStringAsFixed(2)}\n"
@@ -304,6 +471,7 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani>
       ),
     );
   }
+
   @override
   Widget build(BuildContext context) {
     final devir = _devirHesapla(), gelir = _toplamGelir, gider = _toplamGider, net = devir + gelir - gider, pb = widget.paraBirimi;
@@ -380,7 +548,7 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani>
               child: Column(
                 children: [
                   Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [Text(t['devir']!, style: const TextStyle(color: Colors.amberAccent)), Text('$pb${devir.toStringAsFixed(2)}', style: const TextStyle(color: Colors.amberAccent, fontWeight: FontWeight.bold))]),
-                  Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [Text(t['gelir']!, style: const TextStyle(color: Colors.greenAccent)), Text('$pb${gelir.toStringAsFixed(2)}', style: const TextStyle(color: Colors.greenAccent, fontWeight: FontWeight.bold))]),
+                  Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [Text(t['gelir']!, style: const TextStyle(color:Colors.greenAccent)), Text('$pb${gelir.toStringAsFixed(2)}', style: const TextStyle(color: Colors.greenAccent, fontWeight: FontWeight.bold))]),
                   Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [Text(t['gider']!, style: const TextStyle(color: Colors.redAccent)), Text('-$pb${gider.toStringAsFixed(2)}', style: const TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold))]),
                   const Divider(color: Colors.white24),
                   Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [Text(t['net']!, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)), Text('$pb${net.toStringAsFixed(2)}', style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold))]),
@@ -425,7 +593,8 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani>
                 ),
                 Column(
                   children: [
-                    Padding(padding: const EdgeInsets.all(8.0), child: ElevatedButton.icon(style: ElevatedButton.styleFrom(backgroundColor: Colors.red.shade600, foregroundColor: Colors.white), onPressed: _giderEklePenceresi, icon: const Icon(Icons.add), label: Text(t['addExpense']!))),
+                    Padding(padding: const EdgeInsets.all(8.0), child: ElevatedButton.icon(style: ElevatedButton.styleFrom(backgroundColor: Colors.red.shade600, foregroundColor: Colors.white), onPressed:
+_giderEklePenceresi, icon: const Icon(Icons.add), label: Text(t['addExpense']!))),
                     Expanded(
                       child: _aktifGiderler.isEmpty
                           ? Center(child: Text(t['noExpense']!, style: const TextStyle(color: Colors.grey)))
@@ -442,7 +611,13 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani>
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
                                         Text('-$pb${g.tutar.toStringAsFixed(2)}', style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
-                                        IconButton(icon: const Icon(Icons.delete_outline, color: Colors.red), onPressed: () { setState(() => _aktifGiderler.removeAt(index)); _verileriKaydet(); }),
+                                        IconButton(
+                                          icon: const Icon(Icons.delete_outline, color: Colors.red),
+                                          onPressed: () {
+                                            setState(() => _aktifGiderler.removeAt(index));
+                                            _verileriKaydet();
+                                          },
+                                        ),
                                       ],
                                     ),
                                   ),
@@ -460,3 +635,9 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani>
     );
   }
 }
+
+
+
+
+
+
