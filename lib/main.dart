@@ -13,7 +13,8 @@ class GlobalFinancialTrackerApp extends StatefulWidget {
   const GlobalFinancialTrackerApp({super.key});
 
   @override
-  State<GlobalFinancialTrackerApp> createState() => _GlobalFinancialTrackerAppState();
+  State<GlobalFinancialTrackerApp> createState() =>
+      _GlobalFinancialTrackerAppState();
 }
 
 class _GlobalFinancialTrackerAppState extends State<GlobalFinancialTrackerApp> {
@@ -21,7 +22,8 @@ class _GlobalFinancialTrackerAppState extends State<GlobalFinancialTrackerApp> {
   String _paraBirimi = '₺';
 
   void dilDegistir(String yeniDil) => setState(() => _dil = yeniDil);
-  void paraBirimiDegistir(String yeniBirim) => setState(() => _paraBirimi = yeniBirim);
+  void paraBirimiDegistir(String yeniBirim) =>
+      setState(() => _paraBirimi = yeniBirim);
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +69,6 @@ class Gider {
         tarih: json['tarih']?.toString() ?? '',
       );
 }
-
 class AnaTakipEkrani extends StatefulWidget {
   final String seciliDil, paraBirimi;
   final Function(String) onDilDegistir, onParaBirimiDegistir;
@@ -99,7 +100,7 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani>
     'Русский', '中文', '日本語', 'Português', 'Italiano', 'हिन्दी'
   ];
 
-  final List> _paraBirimleri = [
+  final List<Map<String, String>> _paraBirimleri = [
     {'sembol': '₺', 'ad': 'TRY - Türk Lirası (₺)'},
     {'sembol': '\$', 'ad': 'USD - ABD Doları (\$)'},
     {'sembol': '€', 'ad': 'EUR - Euro (€)'},
@@ -133,7 +134,6 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani>
     {'sembol': '₱', 'ad': 'PHP - Filipin Pesosu (₱)'},
     {'sembol': '₫', 'ad': 'VND - Vietnam Dongu (₫)'},
   ];
-
   List<String> get _aylar {
     final aylarMap = {
       'Türkçe': ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara'],
@@ -155,28 +155,38 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani>
   Map<String, String> get t {
     final sozlukler = {
       'Türkçe': {
-        'title': 'Global Financial Tracker', 'devir': 'Geçen Aydan Devir:', 'gelir': 'Personel Geliri:',
-        'gider': 'Aylık Gider:', 'net': 'Sonraki Aya Devir:', 'tab1': 'Personel ve Gelirler', 'tab2': 'Giderler',
-        'addPerson': '+ Yeni Personel Ekle', 'addExpense': '+ Gider Ekle (Tarihli)', 'delete': 'Sil', 'save': 'Kaydet',
-        'cancel': 'İptal', 'settings': 'Ayarlar', 'defaultFee': 'Varsayılan Tutar:', 'currency': 'Para Birimi Seçin:',
-        'editPayment': 'Ödeme Tutarını Girin', 'paid': 'Ödenen:', 'waiting': 'Ödeme bekleniyor',
-        'savedMsg': 'Tüm veriler kalıcı hafızaya kaydedildi!', 'report': 'Aylık Rapor',
-        'fullName': 'Ad Soyad', 'desc': 'Açıklama (Örn: Elektrik)', 'amount': 'Tutar', 'date': 'Tarih (GG.AA.YYYY)',
-        'copyText': 'Metni Kopyala', 'copiedMsg': 'Rapor kopyalandı!', 'ok': 'Tamam',
+        'title': 'Global Financial Tracker', 'devir': 'Geçen Aydan Devir:',
+        'gelir': 'Personel Geliri:', 'gider': 'Aylık Gider:',
+        'net': 'Sonraki Aya Devir:', 'tab1': 'Personel ve Gelirler',
+        'tab2': 'Giderler', 'addPerson': '+ Yeni Personel Ekle',
+        'addExpense': '+ Gider Ekle (Tarihli)', 'delete': 'Sil',
+        'save': 'Kaydet', 'cancel': 'İptal', 'settings': 'Ayarlar',
+        'defaultFee': 'Varsayılan Tutar:', 'currency': 'Para Birimi Seçin:',
+        'editPayment': 'Ödeme Tutarını Girin', 'paid': 'Ödenen:',
+        'waiting': 'Ödeme bekleniyor', 'savedMsg': 'Tüm veriler kalıcı hafızaya kaydedildi!',
+        'report': 'Aylık Rapor', 'fullName': 'Ad Soyad',
+        'desc': 'Açıklama (Örn: Elektrik)', 'amount': 'Tutar',
+        'date': 'Tarih (GG.AA.YYYY)', 'copyText': 'Metni Kopyala',
+        'copiedMsg': 'Rapor kopyalandı!', 'ok': 'Tamam',
         'noExpense': 'Kayıtlı gider yok.',
         'welcomeTitle': 'Global Financial Tracker\'a Hoş Geldiniz',
         'welcomeMsg': '2006-2050 yılları arasındaki personel gelirlerinizi, aylık giderlerinizi ve devir bakiyelerinizi tek ekrandan yönetebilir, anında kasa raporu alabilirsiniz.',
         'startBtn': 'Kasayı Aç',
       },
       'English': {
-        'title': 'Global Financial Tracker', 'devir': 'Previous Balance:', 'gelir': 'Personnel Income:',
-        'gider': 'Expenses:', 'net': 'Next Month Balance:', 'tab1': 'Personnel & Income', 'tab2': 'Expenses',
-        'addPerson': '+ Add Personnel', 'addExpense': '+ Add Expense', 'delete': 'Delete', 'save': 'Save',
-        'cancel': 'Cancel', 'settings': 'Settings', 'defaultFee': 'Default Amount:', 'currency': 'Select Currency:',
-        'editPayment': 'Enter Payment Amount', 'paid': 'Paid:', 'waiting': 'Waiting for payment',
-        'savedMsg': 'All data saved permanently!', 'report': 'Monthly Report',
-        'fullName': 'Full Name', 'desc': 'Description (e.g. Electricity)', 'amount': 'Amount', 'date': 'Date (DD.MM.YYYY)',
-        'copyText': 'Copy Text', 'copiedMsg': 'Report copied!', 'ok': 'OK',
+        'title': 'Global Financial Tracker', 'devir': 'Previous Balance:',
+        'gelir': 'Personnel Income:', 'gider': 'Expenses:',
+        'net': 'Next Month Balance:', 'tab1': 'Personnel & Income',
+        'tab2': 'Expenses', 'addPerson': '+ Add Personnel',
+        'addExpense': '+ Add Expense', 'delete': 'Delete',
+        'save': 'Save', 'cancel': 'Cancel', 'settings': 'Settings',
+        'defaultFee': 'Default Amount:', 'currency': 'Select Currency:',
+        'editPayment': 'Enter Payment Amount', 'paid': 'Paid:',
+        'waiting': 'Waiting for payment', 'savedMsg': 'All data saved permanently!',
+        'report': 'Monthly Report', 'fullName': 'Full Name',
+        'desc': 'Description (e.g. Electricity)', 'amount': 'Amount',
+        'date': 'Date (DD.MM.YYYY)', 'copyText': 'Copy Text',
+        'copiedMsg': 'Report copied!', 'ok': 'OK',
         'noExpense': 'No recorded expenses.',
         'welcomeTitle': 'Welcome to Global Financial Tracker',
         'welcomeMsg': 'Easily manage personnel income, monthly expenses, and carried-over balances from 2006 to 2050, and generate instant monthly reports.',
@@ -203,6 +213,7 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani>
   }
 
   void _karsilamaMesajiGoster() {
+    if (!mounted) return;
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -246,7 +257,6 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani>
       _verileriKaydet();
     }
   }
-
   Future<void> _verileriYukle() async {
     try {
       final dosya = await _kayitDosyasi;
@@ -261,12 +271,8 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani>
             widget.onParaBirimiDegistir(kayitliPb);
           }
         }
-        if (veri['sonYil'] != null) {
-          _yil = (veri['sonYil'] as num).toInt();
-        }
-        if (veri['sonAy'] != null) {
-          _ay = (veri['sonAy'] as num).toInt();
-        }
+        if (veri['sonYil'] != null) _yil = (veri['sonYil'] as num).toInt();
+        if (veri['sonAy'] != null) _ay = (veri['sonAy'] as num).toInt();
         if (veri['personeller'] != null) {
           _personeller = List<String>.from((veri['personeller'] as List).map((e) => e.toString()));
         }
@@ -277,19 +283,16 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani>
           _odemeler.clear();
           (veri['odemeler'] as Map).forEach((k, v) {
             final Map<String, double> subMap = {};
-            (v as Map).forEach((p, a) {
-              subMap[p.toString()] = (a as num).toDouble();
-            });
+            (v as Map).forEach((p, a) => subMap[p.toString()] = (a as num).toDouble());
             _odemeler[k.toString()] = subMap;
           });
         }
         if (veri['giderler'] != null) {
           _giderler.clear();
           (veri['giderler'] as Map).forEach((k, l) {
-            final List<Gider> giderListesi = (l as List)
+            _giderler[k.toString()] = (l as List)
                 .map((i) => Gider.fromJson(Map<String, dynamic>.from(i as Map)))
                 .toList();
-            _giderler[k.toString()] = giderListesi;
           });
         }
         if (mounted) setState(() {});
@@ -393,7 +396,7 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani>
             TextField(
               controller: tutarCtrl,
               keyboardType: const TextInputType.numberWithOptions(decimal: true),
-              decoration: InputDecoration(labelText: '${t['amount']!} (Örn: 500,50 veya 500.200,50)'),
+              decoration: InputDecoration(labelText: '${t['amount']!} (Örn: 500,50)'),
             ),
             TextField(controller: tarihCtrl, decoration: InputDecoration(labelText: t['date']!)),
           ],
@@ -437,9 +440,7 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani>
           TextButton(onPressed: () => Navigator.pop(c), child: Text(t['cancel']!)),
           ElevatedButton(
             onPressed: () {
-              setState(() {
-                _aktifOdemeler[isim] = _metniSayiyaCevir(ctrl.text);
-              });
+              setState(() => _aktifOdemeler[isim] = _metniSayiyaCevir(ctrl.text));
               _verileriKaydet();
               Navigator.pop(c);
             },
@@ -487,9 +488,7 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani>
         actions: [
           ElevatedButton(
             onPressed: () {
-              setState(() {
-                _varsayilanAidat = _metniSayiyaCevir(aidatCtrl.text);
-              });
+              setState(() => _varsayilanAidat = _metniSayiyaCevir(aidatCtrl.text));
               _verileriKaydet(bildirimGoster: true);
               Navigator.pop(c);
             },
@@ -529,7 +528,6 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani>
       ),
     );
   }
-
   @override
   Widget build(BuildContext context) {
     final devir = _devirHesapla(), gelir = _toplamGelir, gider = _toplamGider, net = devir + gelir - gider, pb = widget.paraBirimi;
