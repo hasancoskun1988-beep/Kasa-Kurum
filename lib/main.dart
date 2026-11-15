@@ -68,6 +68,46 @@ class Gider {
       );
 }
 
+const List<String> _sabitDiller = [
+  'Türkçe', 'English', 'Deutsch', 'Français', 'Español', 'العربية',
+  'Русский', '中文', '日本語', 'Português', 'Italiano', 'हिन्दी'
+];
+
+final List> _sabitParaBirimleri = [
+  {'sembol': '₺', 'ad': 'TRY - Türk Lirası (₺)'},
+  {'sembol': '\$', 'ad': 'USD - ABD Doları (\$)'},
+  {'sembol': '€', 'ad': 'EUR - Euro (€)'},
+  {'sembol': '£', 'ad': 'GBP - İngiliz Sterlini (£)'},
+  {'sembol': '₼', 'ad': 'AZN - Azerbaycan Manatı (₼)'},
+  {'sembol': 'CHF', 'ad': 'CHF - İsviçre Frangı (CHF)'},
+  {'sembol': '¥', 'ad': 'JPY/CNY - Yen / Yuan (¥)'},
+  {'sembol': '₽', 'ad': 'RUB - Rus Rublesi (₽)'},
+  {'sembol': '﷼', 'ad': 'SAR - Suudi Riyali (﷼)'},
+  {'sembol': 'د.إ', 'ad': 'AED - BAE Dirhemi (د.إ)'},
+  {'sembol': 'د.ك', 'ad': 'KWD - Kuveyt Dinarı (د.ك)'},
+  {'sembol': 'ر.ق', 'ad': 'QAR - Katar Riyali (ر.ق)'},
+  {'sembol': '₹', 'ad': 'INR - Hindistan Rupisi (₹)'},
+  {'sembol': '₩', 'ad': 'KRW - Güney Kore Wonu (₩)'},
+  {'sembol': 'C\$', 'ad': 'CAD - Kanada Doları (C\$)'},
+  {'sembol': 'A\$', 'ad': 'AUD - Avustralya Doları (A\$)'},
+  {'sembol': 'R\$', 'ad': 'BRL - Brezilya Reali (R\$)'},
+  {'sembol': 'kr', 'ad': 'SEK/NOK - İsveç/Norveç Kronu (kr)'},
+  {'sembol': 'zł', 'ad': 'PLN - Polonya Zlotisi (zł)'},
+  {'sembol': '₴', 'ad': 'UAH - Ukrayna Grivnası (₴)'},
+  {'sembol': '₸', 'ad': 'KZT - Kazakistan Tengesi (₸)'},
+  {'sembol': 'с', 'ad': 'KGS - Kırgızistan Somu (с)'},
+  {'sembol': 'soʻm', 'ad': 'UZS - Özbekistan Somu (soʻm)'},
+  {'sembol': '₾', 'ad': 'GEL - Gürcistan Larisi (₾)'},
+  {'sembol': '₪', 'ad': 'ILS - İsrail Şekeli (₪)'},
+  {'sembol': 'R', 'ad': 'ZAR - Güney Afrika Randı (R)'},
+  {'sembol': '₦', 'ad': 'NGN - Nijerya Nairası (₦)'},
+  {'sembol': '฿', 'ad': 'THB - Tayland Bahtı (฿)'},
+  {'sembol': 'Rp', 'ad': 'IDR - Endonezya Rupiahı (Rp)'},
+  {'sembol': 'RM', 'ad': 'MYR - Malezya Ringgiti (RM)'},
+  {'sembol': '₱', 'ad': 'PHP - Filipin Pesosu (₱)'},
+  {'sembol': '₫', 'ad': 'VND - Vietnam Dongu (₫)'},
+];
+
 class AnaTakipEkrani extends StatefulWidget {
   final String seciliDil, paraBirimi;
   final Function(String) onDilDegistir, onParaBirimiDegistir;
@@ -94,45 +134,8 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani>
   final Map<String, Map<String, double>> _odemeler = {};
   final Map<String, List<Gider>> _giderler = {};
 
-  final List<String> _diller = [
-    'Türkçe', 'English', 'Deutsch', 'Français', 'Español', 'العربية',
-    'Русский', '中文', '日本語', 'Português', 'Italiano', 'हिन्दी'
-  ];
-
-  final List> _paraBirimleri = [
-    {'sembol': '₺', 'ad': 'TRY - Türk Lirası (₺)'},
-    {'sembol': '\$', 'ad': 'USD - ABD Doları (\$)'},
-    {'sembol': '€', 'ad': 'EUR - Euro (€)'},
-    {'sembol': '£', 'ad': 'GBP - İngiliz Sterlini (£)'},
-    {'sembol': '₼', 'ad': 'AZN - Azerbaycan Manatı (₼)'},
-    {'sembol': 'CHF', 'ad': 'CHF - İsviçre Frangı (CHF)'},
-    {'sembol': '¥', 'ad': 'JPY/CNY - Yen / Yuan (¥)'},
-    {'sembol': '₽', 'ad': 'RUB - Rus Rublesi (₽)'},
-    {'sembol': '﷼', 'ad': 'SAR - Suudi Riyali (﷼)'},
-    {'sembol': 'د.إ', 'ad': 'AED - BAE Dirhemi (د.إ)'},
-    {'sembol': 'د.ك', 'ad': 'KWD - Kuveyt Dinarı (د.ك)'},
-    {'sembol': 'ر.ق', 'ad': 'QAR - Katar Riyali (ر.ق)'},
-    {'sembol': '₹', 'ad': 'INR - Hindistan Rupisi (₹)'},
-    {'sembol': '₩', 'ad': 'KRW - Güney Kore Wonu (₩)'},
-    {'sembol': 'C\$', 'ad': 'CAD - Kanada Doları (C\$)'},
-    {'sembol': 'A\$', 'ad': 'AUD - Avustralya Doları (A\$)'},
-    {'sembol': 'R\$', 'ad': 'BRL - Brezilya Reali (R\$)'},
-    {'sembol': 'kr', 'ad': 'SEK/NOK - İsveç/Norveç Kronu (kr)'},
-    {'sembol': 'zł', 'ad': 'PLN - Polonya Zlotisi (zł)'},
-    {'sembol': '₴', 'ad': 'UAH - Ukrayna Grivnası (₴)'},
-    {'sembol': '₸', 'ad': 'KZT - Kazakistan Tengesi (₸)'},
-    {'sembol': 'с', 'ad': 'KGS - Kırgızistan Somu (с)'},
-    {'sembol': 'soʻm', 'ad': 'UZS - Özbekistan Somu (soʻm)'},
-    {'sembol': '₾', 'ad': 'GEL - Gürcistan Larisi (₾)'},
-    {'sembol': '₪', 'ad': 'ILS - İsrail Şekeli (₪)'},
-    {'sembol': 'R', 'ad': 'ZAR - Güney Afrika Randı (R)'},
-    {'sembol': '₦', 'ad': 'NGN - Nijerya Nairası (₦)'},
-    {'sembol': '฿', 'ad': 'THB - Tayland Bahtı (฿)'},
-    {'sembol': 'Rp', 'ad': 'IDR - Endonezya Rupiahı (Rp)'},
-    {'sembol': 'RM', 'ad': 'MYR - Malezya Ringgiti (RM)'},
-    {'sembol': '₱', 'ad': 'PHP - Filipin Pesosu (₱)'},
-    {'sembol': '₫', 'ad': 'VND - Vietnam Dongu (₫)'},
-  ];
+  List<String> get _diller => _sabitDiller;
+  List> get _paraBirimleri => _sabitParaBirimleri;
 
   List<String> get _aylar {
     final aylarMap = {
@@ -667,7 +670,13 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani>
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
                                         Text('-$pb${g.tutar.toStringAsFixed(2)}', style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
-                                        IconButton(icon: const Icon(Icons.delete_outline, color: Colors.red), onPressed: () { setState(() => _aktifGiderler.removeAt(index)); _verileriKaydet(); }),
+                                        IconButton(
+                                          icon: const Icon(Icons.delete_outline, color: Colors.red),
+                                          onPressed: () {
+                                            setState(() => _aktifGiderler.removeAt(index));
+                                            _verileriKaydet();
+                                          },
+                                        ),
                                       ],
                                     ),
                                   ),
