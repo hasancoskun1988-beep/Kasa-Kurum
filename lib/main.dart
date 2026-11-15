@@ -6,17 +6,17 @@ import 'package:path_provider/path_provider.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(const KurumKasaApp());
+  runApp(const GlobalFinancialTrackerApp());
 }
 
-class KurumKasaApp extends StatefulWidget {
-  const KurumKasaApp({super.key});
+class GlobalFinancialTrackerApp extends StatefulWidget {
+  const GlobalFinancialTrackerApp({super.key});
 
   @override
-  State<KurumKasaApp> createState() => _KurumKasaAppState();
+  State<GlobalFinancialTrackerApp> createState() => _GlobalFinancialTrackerAppState();
 }
 
-class _KurumKasaAppState extends State<KurumKasaApp> {
+class _GlobalFinancialTrackerAppState extends State<GlobalFinancialTrackerApp> {
   String _dil = 'Türkçe';
   String _paraBirimi = '₺';
 
@@ -27,6 +27,7 @@ class _KurumKasaAppState extends State<KurumKasaApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      title: 'Global Financial Tracker',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
         useMaterial3: true,
@@ -66,7 +67,6 @@ class Gider {
         tarih: json['tarih']?.toString() ?? '',
       );
 }
-
 class AnaTakipEkrani extends StatefulWidget {
   final String seciliDil, paraBirimi;
   final Function(String) onDilDegistir, onParaBirimiDegistir;
@@ -98,7 +98,7 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani>
     'Русский', '中文', '日本語', 'Português', 'Italiano', 'हिन्दी'
   ];
 
-  final List<Map<String, String>> _paraBirimleri = [
+  final List> _paraBirimleri = [
     {'sembol': '₺', 'ad': 'TRY - Türk Lirası (₺)'},
     {'sembol': '\$', 'ad': 'USD - ABD Doları (\$)'},
     {'sembol': '€', 'ad': 'EUR - Euro (€)'},
@@ -123,207 +123,6 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani>
     {'sembol': 'с', 'ad': 'KGS - Kırgızistan Somu (с)'},
     {'sembol': 'soʻm', 'ad': 'UZS - Özbekistan Somu (soʻm)'},
     {'sembol': '₾', 'ad': 'GEL - Gürcistan Larisi (₾)'},
-    {'sembol': '₪', 'ad': 'ILS - İsrail Şekeli (₪)'},
-    {'sembol': 'R', 'ad': 'ZAR - Güney Afrika Randı (R)'},
-    {'sembol': '₦', 'ad': 'NGN - Nijerya Nairası (₦)'},
-    {'sembol': '฿', 'ad': 'THB - Tayland Bahtı (฿)'},
-    {'sembol': 'Rp', 'ad': 'IDR - Endonezya Rupiahı (Rp)'},
-    {'sembol': 'RM', 'ad': 'MYR - Malezya Ringgiti (RM)'},
-    {'sembol': '₱', 'ad': 'PHP - Filipin Pesosu (₱)'},
-    {'sembol': '₫', 'ad': 'VND - Vietnam Dongu (₫)'},
-  ];
-
-  List<String> get _aylar {
-    final aylarMap = {
-      'Türkçe': ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara'],
-      'English': ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-      'Deutsch': ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'],
-      'Français': ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc'],
-      'Español': ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-      'العربية': ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'],
-      'Русский': ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
-      '中文': ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
-      '日本語': ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
-      'Português': ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
-      'Italiano': ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu', 'Lug', 'Ago', 'Set', 'Ott', 'Nov', 'Dic'],
-      'हिन्दी': ['जन', 'फ़र', 'मार्च', 'अप्रै', 'मई', 'जून', 'जुला', 'अग', 'सित', 'अक्टू', 'नव', 'दिस'],
-    };
-    return aylarMap[widget.seciliDil] ?? aylarMap['English']!;
-  }
-
-  Map<String, String> get t {
-    final sozlukler = {
-      'Türkçe': {
-        'title': 'Kasa Takip', 'devir': 'Geçen Aydan Devir:', 'gelir': 'Personel Geliri:',
-        'gider': 'Aylık Gider:', 'net': 'Sonraki Aya Devir:', 'tab1': 'Personel ve Gelirler', 'tab2': 'Giderler',
-        'addPerson': '+ Yeni Personel Ekle', 'addExpense': '+ Gider Ekle (Tarihli)', 'delete': 'Sil', 'save': 'Kaydet',
-        'cancel': 'İptal', 'settings': 'Ayarlar', 'defaultFee': 'Varsayılan Tutar:', 'currency': 'Para Birimi Seçin:',
-        'editPayment': 'Ödeme Tutarını Girin', 'paid': 'Ödenen:', 'waiting': 'Ödeme bekleniyor',
-        'savedMsg': 'Tüm veriler kalıcı hafızaya kaydedildi!', 'report': 'Aylık Rapor',
-        'fullName': 'Ad Soyad', 'desc': 'Açıklama (Örn: Elektrik)', 'amount': 'Tutar', 'date': 'Tarih (GG.AA.YYYY)',
-        'copyText': 'Metni Kopyala', 'copiedMsg': 'Rapor kopyalandı!', 'ok': 'Tamam',
-        'noExpense': 'Kayıtlı gider yok.',
-        'welcomeTitle': 'Kurum Kasa Takip\'e Hoş Geldiniz',
-        'welcomeMsg': '2006-2050 yılları arasındaki personel gelirlerinizi, aylık giderlerinizi ve devir bakiyelerinizi tek ekrandan yönetebilir, anında kasa raporu alabilirsiniz.',
-        'startBtn': 'Kasayı Aç',
-      },
-      'English': {
-        'title': 'Cashbook', 'devir': 'Previous Balance:', 'gelir': 'Personnel Income:',
-        'gider': 'Expenses:', 'net': 'Next Month Balance:', 'tab1': 'Personnel & Income', 'tab2': 'Expenses',
-        'addPerson': '+ Add Personnel', 'addExpense': '+ Add Expense', 'delete': 'Delete', 'save': 'Save',
-        'cancel': 'Cancel', 'settings': 'Settings', 'defaultFee': 'Default Amount:', 'currency': 'Select Currency:',
-        'editPayment': 'Enter Payment Amount', 'paid': 'Paid:', 'waiting': 'Waiting for payment',
-        'savedMsg': 'All data saved permanently!', 'report': 'Monthly Report',
-        'fullName': 'Full Name', 'desc': 'Description (e.g. Electricity)', 'amount': 'Amount', 'date': 'Date (DD.MM.YYYY)',
-        'copyText': 'Copy Text', 'copiedMsg': 'Report copied!', 'ok': 'OK',
-        'noExpense': 'No recorded expenses.',
-        'welcomeTitle': 'Welcome to Financial Tracking',
-        'welcomeMsg': 'Easily manage personnel income, monthly expenses, and carried-over balances from 2006 to 2050, and generate instant monthly reports.',
-        'startBtn': 'Open Cashbook',
-      },
-    };
-    return sozlukler[widget.seciliDil] ?? sozlukler['English']!;
-  }
-
-  Future<File> get _kayitDosyasi async {
-    final dizin = await getApplicationDocumentsDirectory();
-    return File('${dizin.path}/kurum_kasa_verileri.json');
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addObserver(this);
-    _tab = TabController(length: 2, vsync: this);
-    _verileriYukle();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _karsilamaMesajiGoster());
-  }
-
-  void _karsilamaMesajiGoster() {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (c) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Row(
-          children: [
-            const Icon(Icons.account_balance_wallet, color: Colors.indigo, size: 28),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Text(
-                t['welcomeTitle']!,
-                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.indigo),
-              ),
-            ),
-          ],
-        ),
-        content: Text(t['welcomeMsg']!, style: const TextStyle(fontSize: 14, height: 1.4)),
-        actions: [
-          ElevatedButton.icon(
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.indigo, foregroundColor: Colors.white),
-            onPressed: () => Navigator.pop(c),
-            icon: const Icon(Icons.check_circle_outline),
-            label: Text(t['startBtn']!),
-          ),
-        ],
-      ),
-    );
-  }
-  @override
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    _tab.dispose();
-    super.dispose();
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.paused || state == AppLifecycleState.inactive) {
-      _verileriKaydet();
-    }
-  }
-
-  Future<void> _verileriYukle() async {
-    try {
-      final dosya = await _kayitDosyasi;
-      if (await dosya.exists()) {
-        final Map<String, dynamic> veri = jsonDecode(await dosya.readAsString());
-        if (veri['dil'] != null && _diller.contains(veri['dil'])) {
-          widget.onDilDegistir(veri['dil'].toString());
-        }
-        if (veri['paraBirimi'] != null) {
-          String kayitliPb = veri['paraBirimi'].toString();
-          if (_paraBirimleri.any((e) => e['sembol'] == kayitliPb)) {
-            widget.onParaBirimiDegistir(kayitliPb);
-          }
-        }
-        if (veri['personeller'] != null) {
-          _personeller = List<String>.from(veri['personeller']);
-        }
-        if (veri['varsayilanAidat'] != null) {
-          _varsayilanAidat = (veri['varsayilanAidat'] as num).toDouble();
-        }
-        if (veri['odemeler'] != null) {
-          _odemeler.clear();
-          (veri['odemeler'] as Map).forEach((k, v) {
-            final Map<String, double> subMap = {};
-            (v as Map).forEach((p, a) {
-              subMap[p.toString()] = (a as num).toDouble();
-            });
-            _odemeler[k.toString()] = subMap;
-          });
-        }
-        if (veri['giderler'] != null) {
-          _giderler.clear();
-          (veri['giderler'] as Map).forEach((k, l) {
-            final List<Gider> giderListesi = (l as List)
-                .map((i) => Gider.fromJson(Map<String, dynamic>.from(i as Map)))
-                .toList();
-            _giderler[k.toString()] = giderListesi;
-          });
-        }
-        if (mounted) setState(() {});
-      }
-    } catch (_) {}
-  }
-
-  Future<void> _verileriKaydet({bool bildirimGoster = false}) async {
-    try {
-      final dosya = await _kayitDosyasi;
-      final Map<String, dynamic> veri = {
-        'dil': widget.seciliDil,
-        'paraBirimi': widget.paraBirimi,
-        'personeller': _personeller,
-        'varsayilanAidat': _varsayilanAidat,
-        'odemeler': _odemeler,
-        'giderler': _giderler.map((k, l) => MapEntry(k, l.map((g) => g.toJson()).toList())),
-      };
-      await dosya.writeAsString(jsonEncode(veri));
-      if (bildirimGoster && mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(t['savedMsg']!)));
-      }
-    } catch (_) {}
-  }
-
-  String get _donemKey => '$_yil-$_ay';
-  Map<String, double> get _aktifOdemeler => _odemeler.putIfAbsent(_donemKey, () => {});
-  List<Gider> get _aktifGiderler => _giderler.putIfAbsent(_donemKey, () => []);
-  double get _toplamGelir => _aktifOdemeler.values.fold(0.0, (a, b) => a + b);
-  double get _toplamGider => _aktifGiderler.fold(0.0, (a, b) => a + b.tutar);
-
-  double _devirHesapla() {
-    double toplamDevir = 0.0;
-    int y = 2006, a = 0;
-    while (y < _yil || (y == _yil && a < _ay)) {
-      String key = '$y-$a';
-      double g = (_odemeler[key]?.values.fold<double>(0.0, (t, v) => t + v)) ?? 0.0;
-      double gi = (_giderler[key]?.fold<double>(0.0, (t, x) => t + x.tutar)) ?? 0.0;
-      toplamDevir += (g - gi);
-      a++;
-      if (a > 11) { a = 0; y++; }
-    }
-    return toplamDevir;
-  }
   void _personelEklePenceresi() {
     final ctrl = TextEditingController();
     showDialog(
@@ -369,7 +168,7 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani>
             TextField(
               controller: tutarCtrl,
               keyboardType: const TextInputType.numberWithOptions(decimal: true),
-              decoration: InputDecoration(labelText: t['amount']!),
+              decoration: InputDecoration(labelText: '${t['amount']!} (Örn: 500,50 veya 500.200,50)'),
             ),
             TextField(controller: tarihCtrl, decoration: InputDecoration(labelText: t['date']!)),
           ],
@@ -383,7 +182,7 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani>
                   _aktifGiderler.add(Gider(
                     id: DateTime.now().millisecondsSinceEpoch.toString(),
                     aciklama: aciklamaCtrl.text.trim(),
-                    tutar: double.tryParse(tutarCtrl.text.replaceAll(',', '.')) ?? 0.0,
+                    tutar: _metniSayiyaCevir(tutarCtrl.text),
                     tarih: tarihCtrl.text.trim(),
                   ));
                 });
@@ -407,14 +206,14 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani>
         content: TextField(
           controller: ctrl,
           keyboardType: const TextInputType.numberWithOptions(decimal: true),
-          decoration: InputDecoration(labelText: t['amount']!),
+          decoration: InputDecoration(labelText: '${t['amount']!} (Örn: 500,50)'),
         ),
         actions: [
           TextButton(onPressed: () => Navigator.pop(c), child: Text(t['cancel']!)),
           ElevatedButton(
             onPressed: () {
               setState(() {
-                _aktifOdemeler[isim] = double.tryParse(ctrl.text.replaceAll(',', '.')) ?? 0.0;
+                _aktifOdemeler[isim] = _metniSayiyaCevir(ctrl.text);
               });
               _verileriKaydet();
               Navigator.pop(c);
@@ -440,6 +239,7 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani>
             TextField(
               keyboardType: const TextInputType.numberWithOptions(decimal: true),
               controller: aidatCtrl,
+              decoration: const InputDecoration(hintText: "Örn: 500,50"),
             ),
             const SizedBox(height: 16),
             Text(t['currency']!),
@@ -463,7 +263,7 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani>
           ElevatedButton(
             onPressed: () {
               setState(() {
-                _varsayilanAidat = double.tryParse(aidatCtrl.text.replaceAll(',', '.')) ?? _varsayilanAidat;
+                _varsayilanAidat = _metniSayiyaCevir(aidatCtrl.text);
               });
               _verileriKaydet(bildirimGoster: true);
               Navigator.pop(c);
@@ -482,10 +282,10 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani>
     final gider = _toplamGider;
     final net = devir + gelir - gider;
     String raporMetni = "--- $_yil ${_aylar[_ay]} ${t['report']} ---\n"
-        "${t['devir']} $pb${devir.toStringAsFixed(0)}\n"
-        "${t['gelir']} $pb${gelir.toStringAsFixed(0)}\n"
-        "${t['gider']} -$pb${gider.toStringAsFixed(0)}\n"
-        "${t['net']} $pb${net.toStringAsFixed(0)}\n";
+        "${t['devir']} $pb${devir.toStringAsFixed(2)}\n"
+        "${t['gelir']} $pb${gelir.toStringAsFixed(2)}\n"
+        "${t['gider']} -$pb${gider.toStringAsFixed(2)}\n"
+        "${t['net']} $pb${net.toStringAsFixed(2)}\n";
     showDialog(
       context: context,
       builder: (c) => AlertDialog(
@@ -509,7 +309,7 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani>
     final devir = _devirHesapla(), gelir = _toplamGelir, gider = _toplamGider, net = devir + gelir - gider, pb = widget.paraBirimi;
     return Scaffold(
       appBar: AppBar(
-        title: Text('${t['title']!} ($_yil)', style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold), overflow: TextOverflow.ellipsis),
+        title: Text('${t['title']!} ($_yil)', style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold), overflow: TextOverflow.ellipsis),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         actions: [
           IconButton(padding: EdgeInsets.zero, constraints: const BoxConstraints(), icon: const Icon(Icons.description, color: Colors.red, size: 22), tooltip: t['report'], onPressed: _raporPenceresiAc),
@@ -543,7 +343,12 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani>
                 DropdownButton<int>(
                   value: _yil,
                   items: _yillar.map((y) => DropdownMenuItem<int>(value: y, child: Text('$y', style: const TextStyle(fontWeight: FontWeight.bold)))).toList(),
-                  onChanged: (v) { if (v != null) setState(() => _yil = v); },
+                  onChanged: (v) {
+                    if (v != null) {
+                      setState(() => _yil = v);
+                      _verileriKaydet();
+                    }
+                  },
                 ),
                 const SizedBox(width: 8),
                 Expanded(
@@ -552,7 +357,14 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani>
                     child: Row(
                       children: List.generate(12, (i) => Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 2),
-                        child: ChoiceChip(label: Text(_aylar[i]), selected: _ay == i, onSelected: (_) => setState(() => _ay = i)),
+                        child: ChoiceChip(
+                          label: Text(_aylar[i]),
+                          selected: _ay == i,
+                          onSelected: (_) {
+                            setState(() => _ay = i);
+                            _verileriKaydet();
+                          },
+                        ),
                       )),
                     ),
                   ),
@@ -567,11 +379,11 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani>
               padding: const EdgeInsets.all(12),
               child: Column(
                 children: [
-                  Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [Text(t['devir']!, style: const TextStyle(color: Colors.amberAccent)), Text('$pb${devir.toStringAsFixed(0)}', style: const TextStyle(color: Colors.amberAccent, fontWeight: FontWeight.bold))]),
-                  Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [Text(t['gelir']!, style: const TextStyle(color: Colors.greenAccent)), Text('$pb${gelir.toStringAsFixed(0)}', style: const TextStyle(color: Colors.greenAccent, fontWeight: FontWeight.bold))]),
-                  Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [Text(t['gider']!, style: const TextStyle(color: Colors.redAccent)), Text('-$pb${gider.toStringAsFixed(0)}', style: const TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold))]),
+                  Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [Text(t['devir']!, style: const TextStyle(color: Colors.amberAccent)), Text('$pb${devir.toStringAsFixed(2)}', style: const TextStyle(color: Colors.amberAccent, fontWeight: FontWeight.bold))]),
+                  Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [Text(t['gelir']!, style: const TextStyle(color: Colors.greenAccent)), Text('$pb${gelir.toStringAsFixed(2)}', style: const TextStyle(color: Colors.greenAccent, fontWeight: FontWeight.bold))]),
+                  Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [Text(t['gider']!, style: const TextStyle(color: Colors.redAccent)), Text('-$pb${gider.toStringAsFixed(2)}', style: const TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold))]),
                   const Divider(color: Colors.white24),
-                  Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [Text(t['net']!, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)), Text('$pb${net.toStringAsFixed(0)}', style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold))]),
+                  Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [Text(t['net']!, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)), Text('$pb${net.toStringAsFixed(2)}', style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold))]),
                 ],
               ),
             ),
@@ -629,7 +441,7 @@ class _AnaTakipEkraniState extends State<AnaTakipEkrani>
                                     trailing: Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
-                                        Text('-$pb${g.tutar.toStringAsFixed(0)}', style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
+                                        Text('-$pb${g.tutar.toStringAsFixed(2)}', style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
                                         IconButton(icon: const Icon(Icons.delete_outline, color: Colors.red), onPressed: () { setState(() => _aktifGiderler.removeAt(index)); _verileriKaydet(); }),
                                       ],
                                     ),
